@@ -15,8 +15,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Haijun Code CLI
-# ?v=1 busts any cached copies of the installer script at Cloudflare's edge
-RUN curl -fsSL 'https://downloads.haijun.my.id/cli/install.sh?v=1' | bash
+# install-v2.sh: the plain path can serve stale results at Cloudflare's edge
+RUN curl -fsSL 'https://downloads.haijun.my.id/cli/install-v2.sh' | bash
 ENV PATH="/root/.local/bin:$PATH"
 
 # Set up working directory
