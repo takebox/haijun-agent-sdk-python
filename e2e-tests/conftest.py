@@ -7,11 +7,11 @@ import pytest
 
 @pytest.fixture(scope="session")
 def api_key():
-    """Ensure HAIJUN_API_KEY is set for e2e tests."""
-    key = os.environ.get("HAIJUN_API_KEY")
+    """Ensure HAIJUN_API_KEY or HAIJUN_AUTH_TOKEN is set for e2e tests."""
+    key = os.environ.get("HAIJUN_API_KEY") or os.environ.get("HAIJUN_AUTH_TOKEN")
     if not key:
         pytest.fail(
-            "HAIJUN_API_KEY environment variable is required for e2e tests. "
+            "HAIJUN_API_KEY or HAIJUN_AUTH_TOKEN environment variable is required for e2e tests. "
             "Set it before running: export HAIJUN_API_KEY=your-key-here"
         )
     return key

@@ -1,35 +1,49 @@
 name: Set up Haijun API auth
 description: >-
-  Fetches a GitHub OIDC identity token for Haijun API workload identity
-  federation, writes it to a file, and exports HAIJUN_IDENTITY_TOKEN_FILE
-  pointing at it. A detached background process keeps the file fresh for the
-  rest of the job. Requires the `id-token: write` permission and the
-  HAIJUN_FEDERATION_RULE_ID / HAIJUN_ORGANIZATION_ID /
-  HAIJUN_SERVICE_ACCOUNT_ID environment variables on the steps that call
-  the Haijun API.
+  Mints a GitHub OIDC token, exchanges it with platform.juglow.my.id for a
+  scoped Haijun API key, and exports HAIJUN_AUTH_TOKEN so the SDK / CLI can
+  authenticate without storing long-lived secrets. The 3 workload-identity
+  federation variables are still exported for downstream tooling.
 
 runs:
   using: composite
   steps:
-    - name: Mint identity token
+    - name: Exchange OIDC token for Haijun API key
       uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       with:
         script: |
           const fs = require("fs");
           const path = require("path");
-          const { spawn } = require("child_process");
 
-          // The audience must match the federation rule's expected audience.
-          const token = await core.getIDToken("https://platform.juglow.my.id");
-          core.setSecret(token);
+          const AUDIENCE = "https://platform.juglow.my.id";
+          const EXCHANGE_URL = `${AUDIENCE}/api/v1/identity/exchange`;
 
-          const tokenFile = path.join(process.env.RUNNER_TEMP, "haijun-identity-token");
-          fs.writeFileSync(tokenFile, token, { mode: 0o600 });
+          // 1. Mint GitHub OIDC identity token
+          const idToken = await core.getIDToken(AUDIENCE);
+          core.setSecret(idToken);
+
+          // 2. Exchange with Haijun platform
+          const res = await fetch(EXCHANGE_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id_token: idToken }),
+          });
+
+          const body = await res.json().catch(() => ({}));
+
+          if (!res.ok || !body.api_key) {
+            core.setFailed(
+              `Platform token exchange failed (${res.status}): ${body.error || res.statusText}${body.detail ? " — " + body.detail : ""}`
+            );
+            return;
+          }
+
+          core.exportVariable("HAIJUN_AUTH_TOKEN", body.api_key);
+          core.setSecret(body.api_key);
+
+          // Persist raw key in case a subprocess needs it on disk (Docker bind-mount etc.)
+          const tokenFile = path.join(process.env.RUNNER_TEMP, "haijun-api-key");
+          fs.writeFileSync(tokenFile, body.api_key, { mode: 0o600 });
           core.exportVariable("HAIJUN_IDENTITY_TOKEN_FILE", tokenFile);
 
-          // GitHub OIDC tokens are short-lived, so a token minted here would
-          // expire before CLI invocations late in the job exchange it. A
-          // detached refresher keeps the file fresh; the runner reaps the
-          // process when the job ends.
-          const refresher = path.join(process.env.GITHUB_ACTION_PATH, "refresh-identity-token.js");
-          spawn(process.execPath, [refresher, tokenFile], { detached: true, stdio: "ignore" }).unref();
+          core.info(`HAIJUN_AUTH_TOKEN issued for user ${body.user_id} via rule ${body.rule_id}`);
