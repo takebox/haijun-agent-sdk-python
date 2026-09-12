@@ -133,6 +133,24 @@ jobs:
           "$HOME/.local/bin/claude" --version
           echo "PROBE --version exit=$?"
 
+      - name: Diagnose manifest fetch (Windows)
+        # The Windows runner's Cloudflare edge returns 404 for the manifest even
+        # on a freshly-deployed workers.dev path that answers 200 elsewhere.
+        # Dump the raw response (status/body/remote IP) from this exact region
+        # using curl.exe to see whether the 404 is network-level or specific to
+        # PowerShell's irm.
+        if: runner.os == 'Windows'
+        continue-on-error: true
+        run: |
+          $u = 'https://cli.rompahjunaidi.workers.dev/cli/0.1.0/manifest.v2.json?v=20260912p1'
+          curl.exe -sS -o NUL -w "curl status=%{http_code} remote_ip=%{remote_ip} time=%{time_total} redirect=%{redirect_url}`n" $u
+          curl.exe -sS $u; Write-Output "`n--curl body end--"
+          try {
+            $r = Invoke-WebRequest -Uri $u -UseBasicParsing -SkipHttpErrorCheck -ErrorAction Stop
+            Write-Output "irm status=$($r.StatusCode) length=$($r.RawContentLength) respUri=$($r.BaseResponse.ResponseUri)"
+          } catch { Write-Output "irm ERR: $($_.Exception.Message)" }
+        shell: pwsh
+
       - name: Install Haijun Code (Windows)
         if: runner.os == 'Windows'
         run: |
