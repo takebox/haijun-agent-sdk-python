@@ -124,7 +124,7 @@ jobs:
         # The macOS installer is a compiled native binary; on a too-new OS
         # (macos-latest arm64) it segfaults during `install`. This probe
         # distinguishes a broken platform binary from a broken install step.
-        if: runner.os == 'macOS'
+        if: ${{ always() && runner.os == 'macOS' }}
         continue-on-error: true
         run: |
           ls -la "$HOME/.local/bin/"
