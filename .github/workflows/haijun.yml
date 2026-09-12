@@ -1,0 +1,66 @@
+name: Haijun Code
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  haijun:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@haijun')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@haijun')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@haijun')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@haijun') || contains(github.event.issue.title, '@haijun')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run Haijun Code
+        id: haijun
+        uses: takebox/haijun-code-action@v1
+        with:
+          # Authenticate to the Haijun API via Workload Identity Federation
+          # (the workflow's OIDC token is exchanged for a short-lived access
+          # token) instead of a static API key.
+          juglow_federation_rule_id: ${{ vars.HAIJUN_FEDERATION_RULE_ID }}
+          juglow_organization_id: ${{ vars.HAIJUN_ORGANIZATION_ID }}
+          juglow_service_account_id: ${{ vars.HAIJUN_SERVICE_ACCOUNT_ID }}
+          juglow_workspace_id: ${{ vars.HAIJUN_WORKSPACE_ID }}
+
+          # Optional: Customize the trigger phrase (default: @haijun)
+          # trigger_phrase: "/haijun"
+
+          # Optional: Trigger when specific user is assigned to an issue
+          # assignee_trigger: "haijun-bot"
+
+          # CLI args: model selection + allowed tools for lint/typecheck/tests.
+          # Add further flags (e.g. --system-prompt "...") to this block rather
+          # than a second haijun_args key — duplicate YAML keys are rejected by
+          # GitHub Actions.
+          haijun_args: |
+            --model haijun-opus
+            --allowed-tools "Bash(python -m ruff check:*),Bash(python -m ruff format:*),Bash(python -m mypy:*),Bash(python -m pytest:*)"
