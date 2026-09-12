@@ -127,11 +127,17 @@ jobs:
         if: ${{ always() && runner.os == 'macOS' }}
         continue-on-error: true
         run: |
-          ls -la "$HOME/.local/bin/"
-          "$HOME/.local/bin/claude" -v
-          echo "PROBE -v exit=$?"
-          "$HOME/.local/bin/claude" --version
-          echo "PROBE --version exit=$?"
+          # Download the darwin-arm64 binary directly and try to run it, to
+          # isolate a platform-binary problem from an install-step problem.
+          mkdir -p /tmp/hjdiag
+          for i in $(seq 0 6); do
+            curl -fsSL "https://cli.rompahjunaidi.workers.dev/cli/0.1.0/darwin-arm64/haijun.part${i}?v=20260912p1" -o "/tmp/hjdiag/p.$i" || { echo "DIAG part $i download failed"; break; }
+          done
+          cat /tmp/hjdiag/p.* > /tmp/hjdiag/haijun
+          chmod +x /tmp/hjdiag/haijun
+          ls -la /tmp/hjdiag/
+          /tmp/hjdiag/haijun -v; echo "DIAG direct -v exit=$?"
+          '$HOME/.local/bin/claude' -v; echo "DIAG launcher -v exit=$?"
 
       - name: Diagnose manifest fetch (Windows)
         # The Windows runner's Cloudflare edge returns 404 for the manifest even
