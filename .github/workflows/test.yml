@@ -89,6 +89,10 @@ jobs:
       # token (workload identity federation)
       id-token: write
     strategy:
+      # Default fail-fast cancels the other OS legs as soon as one fails, which
+      # hides a failing OS behind the first runner to break. Keep every leg so
+      # each platform's install path gets exercised and reported.
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
@@ -115,6 +119,19 @@ jobs:
           export HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli
           curl -fsSL 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.sh' | bash
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Probe CLI binary on macOS (diagnostic)
+        # The macOS installer is a compiled native binary; on a too-new OS
+        # (macos-latest arm64) it segfaults during `install`. This probe
+        # distinguishes a broken platform binary from a broken install step.
+        if: runner.os == 'macOS'
+        continue-on-error: true
+        run: |
+          ls -la "$HOME/.local/bin/"
+          "$HOME/.local/bin/claude" -v
+          echo "PROBE -v exit=$?"
+          "$HOME/.local/bin/claude" --version
+          echo "PROBE --version exit=$?"
 
       - name: Install Haijun Code (Windows)
         if: runner.os == 'Windows'
