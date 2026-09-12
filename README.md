@@ -1,4 +1,4 @@
-# Haijun Agent SDK for Python
+# <img src="assets/haijun-logo.png" alt="Haijun" width="36" style="vertical-align: middle;"> Haijun Agent SDK for Python
 
 Python SDK for Haijun Agent. See the [Haijun Agent SDK documentation](https://raw.haijun.my.id/docs/en/agent-sdk/python) for more information.
 
