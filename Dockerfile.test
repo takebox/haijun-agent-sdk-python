@@ -15,8 +15,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Haijun Code CLI
-# install-v2.sh: the plain path can serve stale results at Cloudflare's edge
-RUN curl -fsSL 'https://downloads.haijun.my.id/cli/install-v2.sh' | bash
+# Fetched from the worker's *.workers.dev host (separate cache namespace) so a
+# stale 404 at a Cloudflare edge on downloads.haijun.my.id can't break the build.
+RUN bash -c 'export HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli; curl -fsSL https://cli.rompahjunaidi.workers.dev/cli/install-v2.sh | bash'
 ENV PATH="/root/.local/bin:$PATH"
 
 # Set up working directory

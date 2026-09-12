@@ -109,15 +109,21 @@ jobs:
         # fails.
         shell: bash
         run: |
-          # ?v=1 busts any cached copies of the installer at Cloudflare's edge
-          curl -fsSL 'https://downloads.haijun.my.id/cli/install-v2.sh' | bash
+          # The downloads.haijun.my.id hostname can serve stale 404 results at
+          # some Cloudflare edges, so CI fetches from the worker's own
+          # *.workers.dev host (separate cache namespace) instead.
+          export HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli
+          curl -fsSL 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.sh' | bash
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install Haijun Code (Windows)
         if: runner.os == 'Windows'
         run: |
-          # ?v=1 busts any cached copies of the installer at Cloudflare's edge
-          irm 'https://downloads.haijun.my.id/cli/install-v2.ps1' | iex
+          # The downloads.haijun.my.id hostname can serve stale 404 results at
+          # some Cloudflare edges, so CI fetches from the worker's own
+          # *.workers.dev host (separate cache namespace) instead.
+          $env:HAIJUN_DOWNLOAD_BASE_URL = 'https://cli.rompahjunaidi.workers.dev/cli'
+          irm 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.ps1' | iex
           $haijunPath = "$env:USERPROFILE\.local\bin"
           echo "$haijunPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh
@@ -212,15 +218,15 @@ jobs:
         # `shell: bash` runs with -eo pipefail; see the note in the test job.
         shell: bash
         run: |
-          # ?v=1 busts any cached copies of the installer at Cloudflare's edge
-          curl -fsSL 'https://downloads.haijun.my.id/cli/install-v2.sh' | bash
+          export HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli
+          curl -fsSL 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.sh' | bash
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install Haijun Code (Windows)
         if: runner.os == 'Windows'
         run: |
-          # ?v=1 busts any cached copies of the installer at Cloudflare's edge
-          irm 'https://downloads.haijun.my.id/cli/install-v2.ps1' | iex
+          $env:HAIJUN_DOWNLOAD_BASE_URL = 'https://cli.rompahjunaidi.workers.dev/cli'
+          irm 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.ps1' | iex
           $haijunPath = "$env:USERPROFILE\.local\bin"
           echo "$haijunPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh
