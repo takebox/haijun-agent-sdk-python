@@ -39,6 +39,7 @@ runs:
           }
 
           core.exportVariable("HAIJUN_AUTH_TOKEN", body.api_key);
+          core.exportVariable("HAIJUN_API_KEY", body.api_key);
           core.setSecret(body.api_key);
 
           // Persist raw key in case a subprocess needs it on disk (Docker bind-mount etc.)
