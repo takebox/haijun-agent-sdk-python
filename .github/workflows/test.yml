@@ -239,7 +239,7 @@ jobs:
             -e HAIJUN_SERVICE_ACCOUNT_ID \
             -e HAIJUN_IDENTITY_TOKEN_FILE=/run/haijun-identity-token \
             -v "$HAIJUN_IDENTITY_TOKEN_FILE:/run/haijun-identity-token:ro" \
-            haijun-sdk-test python -m pytest e2e-tests/ -v -m e2e
+            haijun-sdk-test bash -c 'echo "--- HAIJUN env in container ---"; printenv | grep -E "^(CI|HAIJUN|NODE_ENV)" | sed "s/=.*/=<set>/"; haijun -v; echo "--- running e2e ---"; python -m pytest e2e-tests/ -v -m e2e'
 
   test-examples:
     # Skip on forks since they can't mint the OIDC token used for Haijun API auth
