@@ -232,6 +232,7 @@ jobs:
           docker run --rm \
             -e HAIJUN_AUTH_TOKEN \
             -e HAIJUN_API_KEY \
+            -e HAIJUN_BASE_URL \
             -e HAIJUN_FEDERATION_RULE_ID \
             -e HAIJUN_ORGANIZATION_ID \
             -e HAIJUN_SERVICE_ACCOUNT_ID \

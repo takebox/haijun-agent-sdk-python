@@ -40,6 +40,9 @@ runs:
 
           core.exportVariable("HAIJUN_AUTH_TOKEN", body.api_key);
           core.exportVariable("HAIJUN_API_KEY", body.api_key);
+          // Released CLI appends /v1/messages to HAIJUN_BASE_URL, so the env
+          // value must end in /api to match the platform's route.
+          core.exportVariable("HAIJUN_BASE_URL", "https://platform.juglow.my.id/api");
           core.setSecret(body.api_key);
 
           // Persist raw key in case a subprocess needs it on disk (Docker bind-mount etc.)
