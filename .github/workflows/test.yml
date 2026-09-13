@@ -230,6 +230,7 @@ jobs:
         # the host keeps the in-container copy fresh too
         run: |
           docker run --rm \
+            -e CI=true \
             -e HAIJUN_AUTH_TOKEN \
             -e HAIJUN_API_KEY \
             -e HAIJUN_BASE_URL \
