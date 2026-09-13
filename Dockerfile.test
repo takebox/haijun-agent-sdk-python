@@ -14,10 +14,36 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Haijun Code CLI
+# Install the Haijun Code fork binary DIRECTLY.
+#
+# install-v2.sh ends by running `haijun install`, whose launcher step can replace
+# the fork binary with the stock Anthropic CLI pulled from npm (observed as
+# "2.1.270 (Claude Code)" inside the container). That stock CLI ignores the
+# HAIJUN_* env contract and reports "Not logged in" for every e2e test. Fetching
+# the platform tarball and linking it ourselves keeps the fork intact.
+#
 # Fetched from the worker's *.workers.dev host (separate cache namespace) so a
 # stale 404 at a Cloudflare edge on downloads.haijun.my.id can't break the build.
-RUN bash -c 'export HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli; curl -fsSL https://cli.rompahjunaidi.workers.dev/cli/install-v2.sh | bash'
+# The `?v=` nonce defeats any edge-cached 404 for these paths.
+ARG HAIJUN_VERSION=0.1.0
+ENV HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli
+RUN set -euo pipefail; \
+    BASE="${HAIJUN_DOWNLOAD_BASE_URL}"; \
+    V="$(date +%s)"; \
+    MAN="$(curl -fsSL "$BASE/${HAIJUN_VERSION}/manifest.v2.json?v=$V")"; \
+    PARTS="$(printf '%s' "$MAN" | python -c 'import json,sys; print(json.load(sys.stdin)["platforms"]["linux-x64"]["parts"])')"; \
+    SHA="$(printf '%s' "$MAN" | python -c 'import json,sys; print(json.load(sys.stdin)["platforms"]["linux-x64"]["checksum"])')"; \
+    DIR="$HOME/.haijun-code/bin"; mkdir -p "$DIR" "$HOME/.local/bin"; \
+    OUT="$DIR/haijun-${HAIJUN_VERSION}-linux-x64"; : > "$OUT"; \
+    i=0; while [ "$i" -lt "$PARTS" ]; do \
+        curl -fsSL "$BASE/${HAIJUN_VERSION}/linux-x64/haijun.part$i?v=$V" >> "$OUT"; \
+        i=$((i+1)); \
+    done; \
+    echo "$SHA  $OUT" | sha256sum -c -; \
+    chmod +x "$OUT"; \
+    ln -sf "$OUT" "$HOME/.local/bin/haijun"; \
+    ln -sf "$OUT" "$HOME/.local/bin/claude"; \
+    haijun -v | grep -q "Haijun Code"
 ENV PATH="/root/.local/bin:$PATH"
 
 # Set up working directory
