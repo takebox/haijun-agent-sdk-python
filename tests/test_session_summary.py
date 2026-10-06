@@ -39,8 +39,7 @@ KEY: SessionKey = {
 
 
 def _user(
-    text: str | list[dict[str, Any]], ts: str = "2024-01-01T00:00:00.000Z", **extra: Any
-) -> dict[str, Any]:
+    text: str | list[dict[str, Any]], ts: str = "2024-01-01T00:00:00.000Z", **extra: Any ) -> dict[str, Any]:
     return {
         "type": "user",
         "timestamp": ts,
@@ -255,14 +254,12 @@ class TestSummaryEntryToSdkInfo:
                 },
                 None,
             )
-            is None
-        )
+            is None )
 
     def test_empty_summary_returns_none(self) -> None:
         assert (
             summary_entry_to_sdk_info({"session_id": "s", "mtime": 1, "data": {}}, None)
-            is None
-        )
+            is None )
 
     def test_precedence_chain(self) -> None:
         data: dict[str, Any] = {

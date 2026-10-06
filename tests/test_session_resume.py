@@ -92,8 +92,7 @@ class TestNoMaterialization:
     @pytest.mark.anyio
     async def test_load_returns_none(self, cwd: Path) -> None:
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=InMemorySessionStore(), resume=SESSION_ID
-        )
+            cwd=cwd, session_store=InMemorySessionStore(), resume=SESSION_ID )
         assert await materialize_resume_session(opts) is None
 
     @pytest.mark.anyio
@@ -121,8 +120,7 @@ class TestNoMaterialization:
 class TestHappyPath:
     @pytest.mark.anyio
     async def test_resume_writes_jsonl_and_cleanup_removes_dir(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         store = InMemorySessionStore()
         entries: list[SessionStoreEntry] = [
             {
@@ -133,8 +131,7 @@ class TestHappyPath:
             {"type": "assistant", "uuid": "a1"},
         ]
         await store.append(
-            {"project_key": project_key, "session_id": SESSION_ID}, entries
-        )
+            {"project_key": project_key, "session_id": SESSION_ID}, entries )
 
         opts = HaijunAgentOptions(cwd=cwd, session_store=store, resume=SESSION_ID)
         m = await materialize_resume_session(opts)
@@ -154,8 +151,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_credentials_redacted(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         # Seed a credentials file with a refreshToken under the fake ~/.haijun/.
         config = isolated_home / ".haijun"
         config.mkdir()
@@ -187,8 +183,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_credentials_from_caller_config_dir_env(
-        self, cwd: Path, project_key: str, tmp_path: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, tmp_path: Path ) -> None:
         # options.env HAIJUN_CONFIG_DIR takes precedence over ~ lookup.
         custom = tmp_path / "custom-config"
         custom.mkdir()
@@ -245,8 +240,7 @@ class TestHappyPath:
         await m.cleanup()
 
     async def _materialize(
-        self, cwd: Path, project_key: str, **kw: Any
-    ) -> MaterializedResume:
+        self, cwd: Path, project_key: str, **kw: Any ) -> MaterializedResume:
         store = InMemorySessionStore()
         await store.append(
             {"project_key": project_key, "session_id": SESSION_ID},
@@ -259,8 +253,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_user_settings_materialized(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """settings.json (apiKeyHelper etc.) and cowork_settings.json are seeded
         into the temp config dir so an apiKeyHelper-only host can still auth."""
         config = isolated_home / ".haijun"
@@ -286,8 +279,7 @@ class TestHappyPath:
     @pytest.mark.anyio
     @pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="requires os.mkfifo")
     async def test_fifo_seed_file_is_skipped_not_read(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """A FIFO where settings.json is expected would block a plain open()
         forever; it must be skipped like any other non-regular file."""
         config = isolated_home / ".haijun"
@@ -332,8 +324,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_absent_user_settings_writes_nothing(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         m = await self._materialize(cwd, project_key)
         assert not (m.config_dir / "settings.json").exists()
         assert not (m.config_dir / "cowork_settings.json").exists()
@@ -342,8 +333,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_user_settings_strips_plugins_and_config_dir_env(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """Plugin declarations (which would reconcile against the empty temp
         plugin cache) and env.HAIJUN_CONFIG_DIR (which would redirect config
         reads away from the temp dir) are dropped; everything else survives.
@@ -373,8 +363,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_malformed_user_settings_copied_through(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         config = isolated_home / ".haijun"
         config.mkdir()
         (config / "settings.json").write_bytes(b"{not json")
@@ -394,8 +383,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_overflow_float_in_settings_falls_back_to_original_bytes(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """``1e999`` is valid JSON that parses to inf; re-serializing after a
         strip would emit the bare token ``Infinity``, which the CLI rejects.
         The transform must give up and pass the original bytes through."""
@@ -411,8 +399,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_unreadable_seed_files_do_not_abort_resume(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         config = isolated_home / ".haijun"
         config.mkdir()
         # A directory where a file is expected → not a regular file / EACCES.
@@ -433,8 +420,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_continue_picks_most_recent(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         store = InMemorySessionStore()
         # Older session first.
         await store.append(
@@ -449,8 +435,7 @@ class TestHappyPath:
         store._mtimes[f"{project_key}/{SESSION_ID_2}"] = 2000
 
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=store, continue_conversation=True
-        )
+            cwd=cwd, session_store=store, continue_conversation=True )
         m = await materialize_resume_session(opts)
         assert m is not None
         assert m.resume_session_id == SESSION_ID_2
@@ -458,8 +443,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_continue_skips_sidechain_sessions(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """Sidechain transcripts are mirrored as ordinary top-level keys and
         often have the highest mtime. ``continue_conversation`` must skip them
         and resume the most-recent main session, matching the CLI's own
@@ -478,8 +462,7 @@ class TestHappyPath:
         store._mtimes[f"{project_key}/{sidechain_sid}"] = 2000  # newer
 
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=store, continue_conversation=True
-        )
+            cwd=cwd, session_store=store, continue_conversation=True )
         m = await materialize_resume_session(opts)
         assert m is not None
         assert m.resume_session_id == SESSION_ID
@@ -487,8 +470,7 @@ class TestHappyPath:
 
     @pytest.mark.anyio
     async def test_continue_returns_none_when_only_sidechains(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         store = InMemorySessionStore()
         sc = str(uuid.uuid4())
         await store.append(
@@ -496,14 +478,12 @@ class TestHappyPath:
             [{"type": "user", "isSidechain": True}],
         )
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=store, continue_conversation=True
-        )
+            cwd=cwd, session_store=store, continue_conversation=True )
         assert await materialize_resume_session(opts) is None
 
     @pytest.mark.anyio
     async def test_continue_tie_break_is_deterministic(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """Parity with TS: when two sessions share the same mtime,
         continue_conversation picks one deterministically (sorted() is stable
         on equal keys → first listed wins; repeated calls agree)."""
@@ -516,8 +496,7 @@ class TestHappyPath:
             store._mtimes[f"{project_key}/{sid}"] = 5000  # identical mtimes
 
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=store, continue_conversation=True
-        )
+            cwd=cwd, session_store=store, continue_conversation=True )
         first = await materialize_resume_session(opts)
         assert first is not None
         first_id = first.resume_session_id
@@ -567,8 +546,7 @@ class TestHappyPath:
 class TestSubkeyMaterialization:
     @pytest.mark.anyio
     async def test_subagent_jsonl_and_meta_json(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         store = InMemorySessionStore()
         main_key: SessionKey = {"project_key": project_key, "session_id": SESSION_ID}
         await store.append(main_key, [{"type": "user", "uuid": "u1"}])
@@ -610,8 +588,7 @@ class TestSubkeyMaterialization:
 
     @pytest.mark.anyio
     async def test_traversal_guards(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         class EvilStore(InMemorySessionStore):
             async def list_subkeys(self, key):  # type: ignore[override]
                 return [
@@ -659,8 +636,7 @@ class TestSubkeyMaterialization:
 
     @pytest.mark.anyio
     async def test_store_without_list_subkeys_skips_subagents(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         class MinimalStore(SessionStore):
             async def append(self, key, entries):  # type: ignore[override]
                 pass
@@ -669,8 +645,7 @@ class TestSubkeyMaterialization:
                 return [{"type": "user", "uuid": "u1"}]
 
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=MinimalStore(), resume=SESSION_ID
-        )
+            cwd=cwd, session_store=MinimalStore(), resume=SESSION_ID )
         m = await materialize_resume_session(opts)
         assert m is not None
         # Just the main transcript — no subagent dir created.
@@ -698,8 +673,7 @@ class TestTimeoutsAndErrors:
                 return None
 
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=SlowStore(), resume=SESSION_ID, load_timeout_ms=50
-        )
+            cwd=cwd, session_store=SlowStore(), resume=SESSION_ID, load_timeout_ms=50 )
         with pytest.raises(RuntimeError, match="timed out"):
             await materialize_resume_session(opts)
 
@@ -730,8 +704,7 @@ class TestTimeoutsAndErrors:
 
     @pytest.mark.anyio
     async def test_list_subkeys_timeout_raises_and_cleans_temp_dir(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """Parity with TS: load_timeout_ms applies to list_subkeys(); the temp
         dir created by the (already-succeeded) load() is removed on rethrow."""
 
@@ -746,8 +719,7 @@ class TestTimeoutsAndErrors:
             [{"type": "user", "uuid": "u1"}],
         )
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=store, resume=SESSION_ID, load_timeout_ms=50
-        )
+            cwd=cwd, session_store=store, resume=SESSION_ID, load_timeout_ms=50 )
 
         real_mkdtemp = tempfile.mkdtemp
         created: list[str] = []
@@ -768,8 +740,7 @@ class TestTimeoutsAndErrors:
 
     @pytest.mark.anyio
     async def test_cancelled_after_mkdtemp_cleans_temp_dir(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """Cancellation is ``BaseException`` (not ``Exception``) on both
         asyncio and trio — the cleanup-on-failure block must catch it so a
         temp dir already containing ``.credentials.json`` is not leaked when
@@ -820,8 +791,7 @@ class TestTimeoutsAndErrors:
 
     @pytest.mark.anyio
     async def test_non_json_serializable_entry_surfaces_clear_error(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """A store returning non-JSON-serializable values fails materialization
         with a contextual error and leaves no temp dir.
 
@@ -863,15 +833,13 @@ class TestTimeoutsAndErrors:
                 raise OSError("network down")
 
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=BrokenStore(), resume=SESSION_ID
-        )
+            cwd=cwd, session_store=BrokenStore(), resume=SESSION_ID )
         with pytest.raises(RuntimeError, match="network down"):
             await materialize_resume_session(opts)
 
     @pytest.mark.anyio
     async def test_failure_after_mkdir_cleans_temp_dir(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         """If list_subkeys raises after the temp dir is created, the dir is removed."""
 
         class FailLateStore(InMemorySessionStore):
@@ -930,8 +898,7 @@ def _make_mock_transport() -> Any:
 class TestClientIntegration:
     @pytest.mark.anyio
     async def test_connect_passes_config_dir_resume_and_suppresses_continue(
-        self, cwd: Path, project_key: str, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, project_key: str, isolated_home: Path ) -> None:
         store = InMemorySessionStore()
         await store.append(
             {"project_key": project_key, "session_id": SESSION_ID},
@@ -980,8 +947,7 @@ class TestClientIntegration:
         # Build the actual CLI command (real class, outside the patch) to
         # assert exact flag behavior.
         cmd = SubprocessCLITransport(
-            prompt="x", options=transport_opts
-        )._build_command()
+            prompt="x", options=transport_opts )._build_command()
         assert f"--resume={SESSION_ID}" in cmd
         assert "--resume" not in cmd
         assert "--continue" not in cmd
@@ -1076,8 +1042,7 @@ class TestClientIntegration:
 
     @pytest.mark.anyio
     async def test_connect_no_materialization_passthrough(
-        self, cwd: Path, isolated_home: Path
-    ) -> None:
+        self, cwd: Path, isolated_home: Path ) -> None:
         """No store → options reach the transport unchanged."""
         captured: dict[str, Any] = {}
         mock_transport = _make_mock_transport()
@@ -1364,8 +1329,7 @@ class TestSpawnFailureCleanup:
             raise AssertionError("should not spawn")
 
         opts = HaijunAgentOptions(
-            cwd=cwd, session_store=SlowStore(), resume=SESSION_ID, load_timeout_ms=10000
-        )
+            cwd=cwd, session_store=SlowStore(), resume=SESSION_ID, load_timeout_ms=10000 )
         client = HaijunSDKClient(options=opts)
 
         connect_returned = False

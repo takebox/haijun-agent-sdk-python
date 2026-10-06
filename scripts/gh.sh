@@ -31,8 +31,7 @@ case "$CMD" in
     ;;
   *)
     echo "Error: only 'issue view', 'issue list', 'search issues', 'label list' are allowed (e.g., ./scripts/gh.sh issue view 123)" >&2
-    exit 1
-    ;;
+    exit 1 ;;
 esac
 
 shift 2

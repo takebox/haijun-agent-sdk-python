@@ -87,8 +87,7 @@ def test_initialize_sends_forward_subagent_text_when_enabled():
 def test_initialize_omits_forward_subagent_text_by_default():
     assert "forwardSubagentText" not in _capture_initialize_request()
     assert "forwardSubagentText" not in _capture_initialize_request(
-        forward_subagent_text=False
-    )
+        forward_subagent_text=False )
 
 
 @pytest.mark.parametrize("enabled", [True, False])
@@ -1486,8 +1485,7 @@ class TestControlCancelRequest:
                     "request_id": "nonexistent",
                 },
             ]
-            + _ASSISTANT_AND_RESULT
-        )
+            + _ASSISTANT_AND_RESULT )
         q = Query(transport=mock_transport, is_streaming_mode=True)
 
         await q.start()
@@ -1647,8 +1645,7 @@ class TestProcessExitAfterErrorResult:
             text = str(err)
             assert (
                 "Haijun Code returned an error result: "
-                "API Error: Stream idle timeout - no chunks received" in text
-            )
+                "API Error: Stream idle timeout - no chunks received" in text )
             assert "error result: success" not in text
             # The "mid-turn API failure" shape is recoverable from the payload.
             assert err.subtype == "success"
@@ -1667,8 +1664,7 @@ class TestProcessExitAfterErrorResult:
             transport = self._make_transport_then_raise(
                 messages=[
                     self._error_result(
-                        subtype="success", errors=[], result="", api_error_status=529
-                    )
+                        subtype="success", errors=[], result="", api_error_status=529 )
                 ],
                 exc=ProcessError(
                     "Command failed with exit code 1", exit_code=1, stderr=""

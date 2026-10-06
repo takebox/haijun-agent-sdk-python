@@ -59,8 +59,7 @@ class TestToolPermissionCallbacks:
         callback_invoked = False
 
         async def allow_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             nonlocal callback_invoked
             callback_invoked = True
             assert tool_name == "TestTool"
@@ -105,8 +104,7 @@ class TestToolPermissionCallbacks:
         seen_suggestions: list[Any] = []
 
         async def always_allow(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             seen_suggestions.extend(context.suggestions)
             persist = [
                 s for s in context.suggestions if s.destination == "localSettings"
@@ -154,8 +152,7 @@ class TestToolPermissionCallbacks:
         """Test callback that denies tool execution."""
 
         async def deny_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultDeny:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultDeny:
             return PermissionResultDeny(message="Security policy violation")
 
         transport = MockTransport()
@@ -190,8 +187,7 @@ class TestToolPermissionCallbacks:
         """Test callback that modifies tool input."""
 
         async def modify_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             # Modify the input to add safety flag
             modified_input = input_data.copy()
             modified_input["safe_mode"] = True
@@ -230,8 +226,7 @@ class TestToolPermissionCallbacks:
         received_context = None
 
         async def capture_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             nonlocal received_context
             received_context = context
             return PermissionResultAllow()
@@ -269,8 +264,7 @@ class TestToolPermissionCallbacks:
         received_context = None
 
         async def capture_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             nonlocal received_context
             received_context = context
             return PermissionResultAllow()
@@ -308,8 +302,7 @@ class TestToolPermissionCallbacks:
         received_context = None
 
         async def capture_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             nonlocal received_context
             received_context = context
             return PermissionResultAllow()
@@ -356,8 +349,7 @@ class TestToolPermissionCallbacks:
         """Test that callback exceptions are properly handled."""
 
         async def error_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             raise ValueError("Callback error")
 
         transport = MockTransport()
@@ -397,8 +389,7 @@ class TestHookCallbacks:
         hook_calls = []
 
         async def test_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> dict:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> dict:
             hook_calls.append({"input": input_data, "tool_use_id": tool_use_id})
             return {"processed": True}
 
@@ -410,8 +401,7 @@ class TestHookCallbacks:
         }
 
         query = Query(
-            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks
-        )
+            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks )
 
         # Manually register the hook callback to avoid needing the full initialize flow
         callback_id = "test_hook_0"
@@ -447,8 +437,7 @@ class TestHookCallbacks:
 
         # Test all SyncHookJSONOutput fields together
         async def comprehensive_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             return {
                 # Control fields
                 "continue_": True,
@@ -475,8 +464,7 @@ class TestHookCallbacks:
         }
 
         query = Query(
-            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks
-        )
+            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks )
 
         callback_id = "test_comprehensive_hook"
         query.hook_callbacks[callback_id] = comprehensive_hook
@@ -530,8 +518,7 @@ class TestHookCallbacks:
         """Test AsyncHookJSONOutput type with proper async fields."""
 
         async def async_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             # Test that async hooks properly use async_ and asyncTimeout fields
             return {
                 "async_": True,
@@ -542,8 +529,7 @@ class TestHookCallbacks:
         hooks = {"PreToolUse": [{"matcher": None, "hooks": [async_hook]}]}
 
         query = Query(
-            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks
-        )
+            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks )
 
         callback_id = "test_async_hook"
         query.hook_callbacks[callback_id] = async_hook
@@ -580,8 +566,7 @@ class TestHookCallbacks:
         """Test that Python-safe field names (async_, continue_) are converted to CLI format (async, continue)."""
 
         async def conversion_test_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             # Return both async_ and continue_ to test conversion
             return {
                 "async_": True,
@@ -595,8 +580,7 @@ class TestHookCallbacks:
         hooks = {"PreToolUse": [{"matcher": None, "hooks": [conversion_test_hook]}]}
 
         query = Query(
-            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks
-        )
+            transport=transport, is_streaming_mode=True, can_use_tool=None, hooks=hooks )
 
         callback_id = "test_conversion"
         query.hook_callbacks[callback_id] = conversion_test_hook
@@ -644,13 +628,11 @@ class TestHaijunAgentOptionsIntegration:
         """Test creating options with callbacks."""
 
         async def my_callback(
-            tool_name: str, input_data: dict, context: ToolPermissionContext
-        ) -> PermissionResultAllow:
+            tool_name: str, input_data: dict, context: ToolPermissionContext ) -> PermissionResultAllow:
             return PermissionResultAllow()
 
         async def my_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> dict:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> dict:
             return {}
 
         options = HaijunAgentOptions(
@@ -677,8 +659,7 @@ class TestHookEventCallbacks:
         hook_calls: list[dict[str, Any]] = []
 
         async def notification_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             hook_calls.append({"input": input_data, "tool_use_id": tool_use_id})
             return {
                 "hookSpecificOutput": {
@@ -732,8 +713,7 @@ class TestHookEventCallbacks:
         """Test that a PermissionRequest hook callback returns a decision."""
 
         async def permission_request_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             return {
                 "hookSpecificOutput": {
                     "hookEventName": "PermissionRequest",
@@ -779,8 +759,7 @@ class TestHookEventCallbacks:
         """Test that a SubagentStart hook callback works correctly."""
 
         async def subagent_start_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             return {
                 "hookSpecificOutput": {
                     "hookEventName": "SubagentStart",
@@ -826,8 +805,7 @@ class TestHookEventCallbacks:
         """Test PostToolUse hook returning updatedMCPToolOutput."""
 
         async def post_tool_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             return {
                 "hookSpecificOutput": {
                     "hookEventName": "PostToolUse",
@@ -876,8 +854,7 @@ class TestHookEventCallbacks:
         """Test PreToolUse hook returning additionalContext."""
 
         async def pre_tool_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             return {
                 "hookSpecificOutput": {
                     "hookEventName": "PreToolUse",
@@ -932,8 +909,7 @@ class TestHookInitializeRegistration:
         """Test that all new hook event types can be configured in hooks dict."""
 
         async def noop_hook(
-            input_data: HookInput, tool_use_id: str | None, context: HookContext
-        ) -> HookJSONOutput:
+            input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
             return {}
 
         # Verify all new hook events can be used as keys in the hooks config

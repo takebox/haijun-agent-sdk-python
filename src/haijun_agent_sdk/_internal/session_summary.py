@@ -87,8 +87,7 @@ def _fold_first_prompt(data: dict[str, Any], entry: dict[str, Any]) -> None:
     if isinstance(message, dict):
         content = message.get("content")
         if isinstance(content, list) and any(
-            isinstance(b, dict) and b.get("type") == "tool_result" for b in content
-        ):
+            isinstance(b, dict) and b.get("type") == "tool_result" for b in content ):
             return
 
     for raw in _entry_text_blocks(entry):
@@ -190,8 +189,7 @@ def fold_session_summary(
 
 
 def summary_entry_to_sdk_info(
-    entry: SessionSummaryEntry, project_path: str | None
-) -> SDKSessionInfo | None:
+    entry: SessionSummaryEntry, project_path: str | None ) -> SDKSessionInfo | None:
     """Convert a :class:`SessionSummaryEntry` to :class:`SDKSessionInfo`.
 
     Returns ``None`` for sidechain sessions or sessions with no extractable
@@ -211,8 +209,7 @@ def summary_entry_to_sdk_info(
         custom_title
         or data.get("last_prompt")
         or data.get("summary_hint")
-        or first_prompt
-    )
+        or first_prompt )
     if not summary:
         return None
 

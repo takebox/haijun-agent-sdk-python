@@ -54,8 +54,7 @@ Respond = Callable[[dict[str, Any]], None]
 
 
 def parse_jsonrpc(
-    message: dict[str, Any], respond: Respond
-) -> tuple[SessionMessage, RequestId | None]:
+    message: dict[str, Any], respond: Respond ) -> tuple[SessionMessage, RequestId | None]:
     """Decode a raw JSON-RPC dict into the transport message ``Server.run`` reads.
 
     Returns the message together with its request id when mcp parsed it as a
@@ -83,8 +82,7 @@ def parse_jsonrpc(
 def dump_jsonrpc(message: SessionMessage) -> dict[str, Any]:
     """Render a transport message back to a raw JSON-RPC dict for the CLI."""
     dumped: dict[str, Any] = message.message.model_dump(
-        by_alias=True, mode="json", exclude_none=True
-    )
+        by_alias=True, mode="json", exclude_none=True )
     return dumped
 
 
@@ -110,8 +108,7 @@ def can_cancel_requests(server: Server) -> bool:
 
 
 def build_tool_server(
-    name: str, version: str, tools: list[Tool], run_tool: ToolRunner
-) -> Server:
+    name: str, version: str, tools: list[Tool], run_tool: ToolRunner ) -> Server:
     """Build a lowlevel ``Server`` that lists ``tools`` and delegates calls to ``run_tool``.
 
     ``run_tool`` owns argument validation, error mapping and content shaping,

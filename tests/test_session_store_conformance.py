@@ -144,8 +144,7 @@ class TestSessionStoreOptionsValidation:
     def test_no_store_is_always_valid(self) -> None:
         validate_session_store_options(
             HaijunAgentOptions(
-                continue_conversation=True, enable_file_checkpointing=True
-            )
+                continue_conversation=True, enable_file_checkpointing=True )
         )
 
     def test_valid_store_passes(self) -> None:
@@ -164,8 +163,7 @@ class TestSessionStoreOptionsValidation:
         with pytest.raises(ValueError, match="list_sessions"):
             validate_session_store_options(
                 HaijunAgentOptions(
-                    session_store=MinimalStore(), continue_conversation=True
-                )
+                    session_store=MinimalStore(), continue_conversation=True )
             )
 
     def test_continue_conversation_ok_when_store_implements_list_sessions(
@@ -174,8 +172,7 @@ class TestSessionStoreOptionsValidation:
         # InMemorySessionStore implements list_sessions — should pass.
         validate_session_store_options(
             HaijunAgentOptions(
-                session_store=InMemorySessionStore(), continue_conversation=True
-            )
+                session_store=InMemorySessionStore(), continue_conversation=True )
         )
 
     def test_continue_with_resume_and_store_lacking_list_sessions(self) -> None:

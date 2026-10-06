@@ -483,14 +483,12 @@ def _convert_tool_content(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 )
         else:
             logger.warning(
-                "Unsupported content type %r in tool result, skipping", item_type
-            )
+                "Unsupported content type %r in tool result, skipping", item_type )
     return content
 
 
 def create_sdk_mcp_server(
-    name: str, version: str = "1.0.0", tools: list[SdkMcpTool[Any]] | None = None
-) -> McpSdkServerConfig:
+    name: str, version: str = "1.0.0", tools: list[SdkMcpTool[Any]] | None = None ) -> McpSdkServerConfig:
     """Create an in-process MCP server that runs within your Python application.
 
     Unlike external MCP servers that run as separate processes, SDK MCP servers

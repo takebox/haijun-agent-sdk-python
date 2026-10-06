@@ -148,8 +148,7 @@ class RedisSessionStore(SessionStore):
 
     async def list_sessions(self, project_key: str) -> list[SessionStoreListEntry]:
         pairs = await self._client.zrange(
-            self._sessions_key(project_key), 0, -1, withscores=True
-        )
+            self._sessions_key(project_key), 0, -1, withscores=True )
         return [
             {"session_id": session_id, "mtime": int(score)}
             for session_id, score in pairs

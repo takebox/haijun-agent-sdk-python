@@ -32,8 +32,7 @@ def project_key(cwd: Path) -> str:
 
 @pytest.fixture
 def haijun_dir(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, project_key: str
-) -> Path:
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, project_key: str ) -> Path:
     """Create an isolated ~/.haijun/projects/<project_key>/ tree."""
     config = tmp_path / "haijun_config"
     project_dir = config / "projects" / project_key
@@ -59,8 +58,7 @@ def _write_jsonl(path: Path, entries: list[SessionStoreEntry]) -> None:
 class TestMainTranscript:
     @pytest.mark.anyio
     async def test_imports_main_transcript(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         entries = [_entry(i) for i in range(7)]
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", entries)
 
@@ -72,8 +70,7 @@ class TestMainTranscript:
 
     @pytest.mark.anyio
     async def test_batching_calls_append_per_chunk(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         entries = [_entry(i) for i in range(5)]
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", entries)
 
@@ -82,8 +79,7 @@ class TestMainTranscript:
         store.append = spy  # type: ignore[method-assign]
 
         await import_session_to_store(
-            SESSION_ID, store, directory=str(cwd), batch_size=2
-        )
+            SESSION_ID, store, directory=str(cwd), batch_size=2 )
 
         # 5 entries / batch_size 2 → 3 append() calls (2 + 2 + 1).
         assert spy.await_count == 3
@@ -95,8 +91,7 @@ class TestMainTranscript:
 
     @pytest.mark.anyio
     async def test_skips_blank_lines(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         path = haijun_dir / f"{SESSION_ID}.jsonl"
         path.write_text(
             json.dumps(_entry(0)) + "\n\n" + json.dumps(_entry(1)) + "\n",
@@ -111,8 +106,7 @@ class TestMainTranscript:
 
     @pytest.mark.anyio
     async def test_nonpositive_batch_size_uses_default(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         entries = [_entry(i) for i in range(3)]
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", entries)
 
@@ -121,8 +115,7 @@ class TestMainTranscript:
         store.append = spy  # type: ignore[method-assign]
 
         await import_session_to_store(
-            SESSION_ID, store, directory=str(cwd), batch_size=0
-        )
+            SESSION_ID, store, directory=str(cwd), batch_size=0 )
 
         assert spy.await_count == 1
         key: SessionKey = {"project_key": project_key, "session_id": SESSION_ID}
@@ -137,13 +130,11 @@ class TestMainTranscript:
 class TestSubagents:
     @pytest.mark.anyio
     async def test_imports_subagent_transcripts_with_subpath(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", [_entry(0)])
         sub_entries = [_entry(10), _entry(11)]
         _write_jsonl(
-            haijun_dir / SESSION_ID / "subagents" / "agent-abc.jsonl", sub_entries
-        )
+            haijun_dir / SESSION_ID / "subagents" / "agent-abc.jsonl", sub_entries )
 
         store = InMemorySessionStore()
         await import_session_to_store(SESSION_ID, store, directory=str(cwd))
@@ -160,8 +151,7 @@ class TestSubagents:
 
     @pytest.mark.anyio
     async def test_imports_nested_subagent_transcripts(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", [_entry(0)])
         nested = haijun_dir / SESSION_ID / "subagents" / "workflows" / "run-1"
         _write_jsonl(nested / "agent-def.jsonl", [_entry(20)])
@@ -178,8 +168,7 @@ class TestSubagents:
 
     @pytest.mark.anyio
     async def test_imports_meta_json_sidecar_as_agent_metadata(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", [_entry(0)])
         sub_dir = haijun_dir / SESSION_ID / "subagents"
         _write_jsonl(sub_dir / "agent-abc.jsonl", [_entry(10)])
@@ -206,8 +195,7 @@ class TestSubagents:
 
     @pytest.mark.anyio
     async def test_meta_json_type_key_cannot_shadow_agent_metadata_marker(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", [_entry(0)])
         sub_dir = haijun_dir / SESSION_ID / "subagents"
         _write_jsonl(sub_dir / "agent-abc.jsonl", [_entry(10)])
@@ -232,8 +220,7 @@ class TestSubagents:
     @pytest.mark.anyio
     @pytest.mark.parametrize("sidecar", ["not json {", "[1, 2]", "42"])
     async def test_unusable_meta_json_sidecar_is_treated_as_absent(
-        self, haijun_dir: Path, cwd: Path, project_key: str, sidecar: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str, sidecar: str ) -> None:
         """A corrupt or non-object sidecar must not abort the import midway
         (previously json errors / TypeError escaped after the transcripts had
         already been appended); it degrades to a missing sidecar."""
@@ -254,8 +241,7 @@ class TestSubagents:
 
     @pytest.mark.anyio
     async def test_include_subagents_false_skips_subagents(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", [_entry(0)])
         _write_jsonl(
             haijun_dir / SESSION_ID / "subagents" / "agent-abc.jsonl", [_entry(10)]
@@ -263,8 +249,7 @@ class TestSubagents:
 
         store = InMemorySessionStore()
         await import_session_to_store(
-            SESSION_ID, store, directory=str(cwd), include_subagents=False
-        )
+            SESSION_ID, store, directory=str(cwd), include_subagents=False )
 
         assert (
             await store.list_subkeys(
@@ -275,8 +260,7 @@ class TestSubagents:
 
     @pytest.mark.anyio
     async def test_no_subagents_dir_is_noop(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         _write_jsonl(haijun_dir / f"{SESSION_ID}.jsonl", [_entry(0)])
 
         store = InMemorySessionStore()
@@ -314,8 +298,7 @@ class TestValidation:
 class TestKeyParity:
     @pytest.mark.anyio
     async def test_subpath_matches_file_path_to_session_key(
-        self, haijun_dir: Path, cwd: Path, project_key: str
-    ) -> None:
+        self, haijun_dir: Path, cwd: Path, project_key: str ) -> None:
         """Import keys must match what TranscriptMirrorBatcher would have
         produced for the same on-disk file, so an imported session is
         indistinguishable from a live-mirrored one."""
@@ -330,8 +313,7 @@ class TestKeyParity:
 
         projects_dir = str(haijun_dir.parent)
         expected_main = file_path_to_session_key(
-            str(haijun_dir / f"{SESSION_ID}.jsonl"), projects_dir
-        )
+            str(haijun_dir / f"{SESSION_ID}.jsonl"), projects_dir )
         expected_sub = file_path_to_session_key(str(sub_file), projects_dir)
 
         assert expected_main is not None and expected_sub is not None

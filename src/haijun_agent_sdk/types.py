@@ -204,8 +204,7 @@ class ToolPermissionContext:
 
     signal: Any | None = None  # Future: abort signal support
     suggestions: list[PermissionUpdate] = field(
-        default_factory=list
-    )  # Permission suggestions from CLI
+        default_factory=list )  # Permission suggestions from CLI
     tool_use_id: str | None = None
     """Unique identifier for this specific tool call within the assistant message.
     Multiple tool calls in the same assistant message will have different tool_use_ids.
@@ -408,8 +407,7 @@ HookInput = (
     | PreCompactHookInput
     | NotificationHookInput
     | SubagentStartHookInput
-    | PermissionRequestHookInput
-)
+    | PermissionRequestHookInput )
 
 
 # Hook-specific output types
@@ -491,8 +489,7 @@ HookSpecificOutput = (
     | SessionStartHookSpecificOutput
     | NotificationHookSpecificOutput
     | SubagentStartHookSpecificOutput
-    | PermissionRequestHookSpecificOutput
-)
+    | PermissionRequestHookSpecificOutput )
 
 
 # See https://raw.haijun.my.id/docs/en/docs/haijun-code/hooks#advanced%3A-json-output
@@ -647,8 +644,7 @@ class McpSdkServerConfig(TypedDict):
 
 
 McpServerConfig = (
-    McpStdioServerConfig | McpSSEServerConfig | McpHttpServerConfig | McpSdkServerConfig
-)
+    McpStdioServerConfig | McpSSEServerConfig | McpHttpServerConfig | McpSdkServerConfig )
 
 
 # MCP Server Status types (returned by get_mcp_status)
@@ -687,8 +683,7 @@ McpServerStatusConfig = (
     | McpSSEServerConfig
     | McpHttpServerConfig
     | McpSdkServerConfigStatus
-    | McpHaijunAIProxyServerConfig
-)
+    | McpHaijunAIProxyServerConfig )
 
 
 class McpToolAnnotations(TypedDict, total=False):
@@ -1010,8 +1005,7 @@ ContentBlock = (
     | ToolUseBlock
     | ToolResultBlock
     | ServerToolUseBlock
-    | ServerToolResultBlock
-)
+    | ServerToolResultBlock )
 
 
 # Message types
@@ -1481,8 +1475,7 @@ Message = (
     | ResultMessage
     | StreamEvent
     | RateLimitEvent
-    | ConversationResetMessage
-)
+    | ConversationResetMessage )
 
 
 # ---------------------------------------------------------------------------
@@ -1657,8 +1650,7 @@ class SessionStore(Protocol):
         raise NotImplementedError
 
     async def list_session_summaries(
-        self, project_key: str
-    ) -> list[SessionSummaryEntry]:
+        self, project_key: str ) -> list[SessionSummaryEntry]:
         """Return incrementally-maintained summaries for all sessions in one call.
 
         Stores should maintain these via :func:`fold_session_summary` inside
@@ -1848,8 +1840,7 @@ def _get_can_use_tool_shadowed_warning(
         dict.fromkeys(
             tool
             for entry in allowed_tools
-            if (tool := _whole_tool_allowed(entry)) is not None
-        )
+            if (tool := _whole_tool_allowed(entry)) is not None )
     )
     if not shadowed:
         return None
@@ -2445,8 +2436,7 @@ class SDKControlRequest(TypedDict):
         | SDKControlRewindFilesRequest
         | SDKControlMcpReconnectRequest
         | SDKControlMcpToggleRequest
-        | SDKControlStopTaskRequest
-    )
+        | SDKControlStopTaskRequest )
 
 
 class ControlResponse(TypedDict):

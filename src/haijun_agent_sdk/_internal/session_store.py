@@ -98,8 +98,7 @@ class InMemorySessionStore(SessionStore):
         return results
 
     async def list_session_summaries(
-        self, project_key: str
-    ) -> list[SessionSummaryEntry]:
+        self, project_key: str ) -> list[SessionSummaryEntry]:
         return [s for (pk, _), s in self._summaries.items() if pk == project_key]
 
     async def delete(self, key: SessionKey) -> None:

@@ -27,8 +27,7 @@ async def main():
     print("Running query with stderr capture...")
     async for message in query(
         prompt="What is 2+2?",
-        options=options
-    ):
+        options=options ):
         if hasattr(message, 'content'):
             if isinstance(message.content, str):
                 print(f"Response: {message.content}")

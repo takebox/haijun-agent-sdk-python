@@ -15,8 +15,7 @@ from haijun_agent_sdk import (
 
 
 def generate_large_agents(
-    num_agents: int = 20, prompt_size_kb: int = 12
-) -> dict[str, AgentDefinition]:
+    num_agents: int = 20, prompt_size_kb: int = 12 ) -> dict[str, AgentDefinition]:
     """Generate multiple agents with large prompts for testing.
 
     Args:

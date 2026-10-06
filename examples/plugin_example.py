@@ -35,8 +35,7 @@ async def plugin_example():
                 "path": str(plugin_path),
             }
         ],
-        max_turns=1,  # Limit to one turn for quick demo
-    )
+        max_turns=1,  # Limit to one turn for quick demo )
 
     print(f"Loading plugin from: {plugin_path}\n")
 

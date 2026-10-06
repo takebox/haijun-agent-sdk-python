@@ -70,8 +70,7 @@ class _PendingResponse:
     """
 
     def __init__(
-        self, table: dict[Any, _PendingResponse], request_id: Any, method: Any
-    ) -> None:
+        self, table: dict[Any, _PendingResponse], request_id: Any, method: Any ) -> None:
         if request_id in table:
             raise Exception(f"Request id {request_id!r} is already in flight")
         self.method = method
@@ -179,8 +178,7 @@ class _Session:
             pending.resolve(failure)
 
     async def _serve(
-        self, server_read: Any, server_write: Any, served: anyio.Event
-    ) -> None:
+        self, server_read: Any, server_write: Any, served: anyio.Event ) -> None:
         try:
             await self._server.run(
                 server_read,

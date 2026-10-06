@@ -236,8 +236,7 @@ class S3SessionStore(SessionStore):
                 result = await self._get_object(Bucket=self._bucket, Key=object_key)
                 raw = await anyio.to_thread.run_sync(result["Body"].read)
                 bodies[i] = (
-                    raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw
-                )
+                    raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw )
 
         async with anyio.create_task_group() as tg:
             for i, k in enumerate(keys):
@@ -291,8 +290,7 @@ class S3SessionStore(SessionStore):
                 else:
                     last_modified = obj.get("LastModified")
                     mtime = (
-                        int(last_modified.timestamp() * 1000) if last_modified else 0
-                    )
+                        int(last_modified.timestamp() * 1000) if last_modified else 0 )
                 if mtime > sessions.get(session_id, 0):
                     sessions[session_id] = mtime
             continuation_token = result.get("NextContinuationToken")
@@ -332,8 +330,7 @@ class S3SessionStore(SessionStore):
                 errors = del_result.get("Errors") or []
                 if errors:
                     detail = ", ".join(
-                        f"{e.get('Key')}: {e.get('Code')}" for e in errors
-                    )
+                        f"{e.get('Key')}: {e.get('Code')}" for e in errors )
                     raise RuntimeError(
                         f"S3 delete failed for {len(errors)} object(s): {detail}"
                     )
@@ -397,8 +394,7 @@ class _RecordingClient:
         self.calls.append(("put_object", kwargs))
         body = kwargs["Body"]
         self.objects[kwargs["Key"]] = (
-            body.encode("utf-8") if isinstance(body, str) else body
-        )
+            body.encode("utf-8") if isinstance(body, str) else body )
         return {}
 
     def list_objects_v2(self, **kwargs: Any) -> dict[str, Any]:

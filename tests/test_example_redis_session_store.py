@@ -53,8 +53,7 @@ _EXAMPLE_PATH = (
     / "redis_session_store.py"
 )
 _spec = importlib.util.spec_from_file_location(
-    "_redis_session_store_example", _EXAMPLE_PATH
-)
+    "_redis_session_store_example", _EXAMPLE_PATH )
 assert _spec is not None and _spec.loader is not None
 _module = importlib.util.module_from_spec(_spec)
 sys.modules[_spec.name] = _module
@@ -117,8 +116,7 @@ class TestAppend:
 
     @pytest.mark.anyio
     async def test_rpushes_json_and_zadds_session_index(
-        self, client: fakeredis.FakeAsyncRedis, store: SessionStore
-    ) -> None:
+        self, client: fakeredis.FakeAsyncRedis, store: SessionStore ) -> None:
         await store.append(
             {"project_key": "proj", "session_id": "sess"},
             [{"type": "x", "a": 1}, {"type": "x", "b": 2}],
@@ -139,8 +137,7 @@ class TestAppend:
 
     @pytest.mark.anyio
     async def test_subpath_sadds_subkeys_and_skips_session_index(
-        self, client: fakeredis.FakeAsyncRedis, store: SessionStore
-    ) -> None:
+        self, client: fakeredis.FakeAsyncRedis, store: SessionStore ) -> None:
         await store.append(
             {"project_key": "proj", "session_id": "sess", "subpath": "subagents/a-1"},
             [{"type": "x", "n": 1}],
@@ -153,8 +150,7 @@ class TestAppend:
 
     @pytest.mark.anyio
     async def test_noop_on_empty_entries(
-        self, client: fakeredis.FakeAsyncRedis, store: SessionStore
-    ) -> None:
+        self, client: fakeredis.FakeAsyncRedis, store: SessionStore ) -> None:
         await store.append({"project_key": "proj", "session_id": "sess"}, [])
         # Nothing written — no list, no index.
         assert await client.keys("*") == []
@@ -178,8 +174,7 @@ class TestLoad:
 
     @pytest.mark.anyio
     async def test_skips_malformed_json(
-        self, client: fakeredis.FakeAsyncRedis, store: SessionStore
-    ) -> None:
+        self, client: fakeredis.FakeAsyncRedis, store: SessionStore ) -> None:
         await client.rpush(
             "p:proj:sess", '{"type":"x","ok":1}', "not json", '{"type":"x","ok":2}'
         )
@@ -276,8 +271,7 @@ SESSION_ID = "550e8400-e29b-41d4-a716-446655440000"
 class TestRoundTrip:
     @pytest.mark.anyio
     async def test_mirror_then_resume(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch ) -> None:
         # Isolate ~ so _copy_auth_files doesn't touch the real config.
         home = tmp_path / "home"
         home.mkdir()
@@ -303,8 +297,7 @@ class TestRoundTrip:
 
         projects_dir = str(tmp_path / "config" / "projects")
         batcher = TranscriptMirrorBatcher(
-            store=writer, projects_dir=projects_dir, on_error=on_error
-        )
+            store=writer, projects_dir=projects_dir, on_error=on_error )
 
         main_path = f"{projects_dir}/{project_key}/{SESSION_ID}.jsonl"
         sub_path = f"{projects_dir}/{project_key}/{SESSION_ID}/subagents/agent-1.jsonl"

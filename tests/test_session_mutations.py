@@ -153,8 +153,7 @@ class TestRenameSession:
             rename_session(sid, "title", directory=project_path)
 
     def test_no_projects_dir_raises(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ):
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch ):
         """Missing projects dir raises FileNotFoundError."""
         monkeypatch.setenv("HAIJUN_CONFIG_DIR", str(tmp_path / "nonexistent"))
         sid = str(uuid.uuid4())
@@ -181,8 +180,7 @@ class TestRenameSession:
         assert entry["sessionId"] == sid
 
     def test_title_trimmed_before_storing(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Leading/trailing whitespace is stripped from title."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -408,8 +406,7 @@ class TestTagSession:
         assert entry["tag"] == "cleantag"
 
     def test_sanitization_rejects_pure_invisible(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Tag that is only zero-width chars is rejected."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -491,8 +488,7 @@ class TestDeleteSession:
         assert not file_path.exists()
 
     def test_removes_subagent_transcript_dir(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Cascades the sibling {sid}/ subagent dir alongside the .jsonl."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -653,8 +649,7 @@ class TestForkSession:
                     assert entry["parentUuid"] not in original_uuids
 
     def test_fork_preserves_message_count(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Fork has the same number of user/assistant messages."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -692,8 +687,7 @@ class TestForkSession:
         assert len(fork_msgs) == 2
 
     def test_fork_up_to_message_id_not_found_raises(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         project_dir = _make_project_dir(
@@ -725,8 +719,7 @@ class TestForkSession:
         assert fork_info.custom_title == "My Fork"
 
     def test_fork_default_title_has_suffix(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Default fork title is derived from original + ' (fork)'."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)

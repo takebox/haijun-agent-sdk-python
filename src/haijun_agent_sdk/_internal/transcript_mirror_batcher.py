@@ -84,8 +84,7 @@ class TranscriptMirrorBatcher:
         self._pending_bytes += size
         if (
             self._pending_entries > self.max_pending_entries
-            or self._pending_bytes > self.max_pending_bytes
-        ):
+            or self._pending_bytes > self.max_pending_bytes ):
             # Fire-and-forget on the current backend via the SDK's sniffio-
             # dispatched spawner; the lock in _drain() serializes against any
             # in-flight flush so append ordering holds. _drain() is contracted

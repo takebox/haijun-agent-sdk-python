@@ -325,8 +325,7 @@ class TestListSessions:
         assert sessions[0].custom_title is None
 
     def test_multiple_sessions_sorted_by_mtime(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Sessions are sorted by last_modified descending."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -356,12 +355,10 @@ class TestListSessions:
 
         for i in range(5):
             _make_session_file(
-                project_dir, first_prompt=f"prompt {i}", mtime=1000.0 + i
-            )
+                project_dir, first_prompt=f"prompt {i}", mtime=1000.0 + i )
 
         sessions = list_sessions(
-            directory=project_path, limit=2, include_worktrees=False
-        )
+            directory=project_path, limit=2, include_worktrees=False )
         assert len(sessions) == 2
         # Should be the 2 newest
         assert sessions[0].last_modified >= sessions[1].last_modified
@@ -376,19 +373,16 @@ class TestListSessions:
 
         for i in range(5):
             _make_session_file(
-                project_dir, first_prompt=f"prompt {i}", mtime=1000.0 + i
-            )
+                project_dir, first_prompt=f"prompt {i}", mtime=1000.0 + i )
 
         # Get page 1 (first 2)
         page1 = list_sessions(
-            directory=project_path, limit=2, offset=0, include_worktrees=False
-        )
+            directory=project_path, limit=2, offset=0, include_worktrees=False )
         assert len(page1) == 2
 
         # Get page 2 (next 2)
         page2 = list_sessions(
-            directory=project_path, limit=2, offset=2, include_worktrees=False
-        )
+            directory=project_path, limit=2, offset=2, include_worktrees=False )
         assert len(page2) == 2
 
         # Pages should have different sessions
@@ -401,8 +395,7 @@ class TestListSessions:
 
         # Offset beyond available returns empty
         page_empty = list_sessions(
-            directory=project_path, offset=100, include_worktrees=False
-        )
+            directory=project_path, offset=100, include_worktrees=False )
         assert len(page_empty) == 0
 
     def test_filters_sidechain_sessions(self, haijun_config_dir: Path, tmp_path: Path):
@@ -489,11 +482,9 @@ class TestListSessions:
 
         shared_sid = str(uuid.uuid4())
         _make_session_file(
-            proj1, session_id=shared_sid, first_prompt="older", mtime=1000.0
-        )
+            proj1, session_id=shared_sid, first_prompt="older", mtime=1000.0 )
         _make_session_file(
-            proj2, session_id=shared_sid, first_prompt="newer", mtime=2000.0
-        )
+            proj2, session_id=shared_sid, first_prompt="newer", mtime=2000.0 )
 
         sessions = list_sessions()
         assert len(sessions) == 1
@@ -551,13 +542,11 @@ class TestListSessions:
             _make_session_file(project_dir, first_prompt=f"p{i}")
 
         sessions = list_sessions(
-            directory=project_path, limit=0, include_worktrees=False
-        )
+            directory=project_path, limit=0, include_worktrees=False )
         assert len(sessions) == 3
 
     def test_cwd_from_head_fallback_to_project_path(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """cwd falls back to project path when not in head."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -572,8 +561,7 @@ class TestListSessions:
         assert sessions[0].cwd == canonical
 
     def test_git_branch_from_tail_preferred(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """gitBranch from tail is preferred over head."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -770,8 +758,7 @@ class TestGetSessionMessages:
         assert messages[1].uuid == a1
 
     def test_filters_non_user_assistant_from_chain(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Progress/system entries in chain are filtered from output."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -878,8 +865,7 @@ class TestGetSessionMessages:
         assert page == []
 
     def test_picks_main_chain_over_sidechain(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """When multiple leaves exist, prefers non-sidechain main leaf."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -914,8 +900,7 @@ class TestGetSessionMessages:
         assert messages[1].uuid == main_leaf  # main leaf chosen, not sidechain
 
     def test_picks_latest_leaf_by_file_position(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """When multiple main leaves exist, picks the one latest in the file."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -943,8 +928,7 @@ class TestGetSessionMessages:
         assert messages[1].uuid == new_leaf
 
     def test_terminal_non_message_walked_back(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """A terminal progress entry is walked back to find user/assistant leaf."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1056,8 +1040,7 @@ class TestGetSessionMessages:
         assert get_session_messages(sid, directory=project_path) == []
 
     def test_ignores_non_transcript_types(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Lines with type=summary (no uuid/chain) are ignored during parsing."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1181,11 +1164,9 @@ class TestTagExtraction:
         lines = [
             json.dumps({"type": "user", "message": {"content": "hello"}}),
             json.dumps(
-                {"type": "tag", "tag": "first-tag", "sessionId": sid}, **_COMPACT
-            ),
+                {"type": "tag", "tag": "first-tag", "sessionId": sid}, **_COMPACT ),
             json.dumps(
-                {"type": "tag", "tag": "second-tag", "sessionId": sid}, **_COMPACT
-            ),
+                {"type": "tag", "tag": "second-tag", "sessionId": sid}, **_COMPACT ),
         ]
         file_path.write_text("\n".join(lines) + "\n")
 
@@ -1242,8 +1223,7 @@ class TestTagExtraction:
         lines = [
             json.dumps({"type": "user", "message": {"content": "tag this v1.0"}}),
             json.dumps(
-                {"type": "tag", "tag": "real-tag", "sessionId": sid}, **_COMPACT
-            ),
+                {"type": "tag", "tag": "real-tag", "sessionId": sid}, **_COMPACT ),
             # A tool_use entry with a "tag" key in its input — must NOT match.
             json.dumps(
                 {
@@ -1267,8 +1247,7 @@ class TestTagExtraction:
         assert sessions[0].tag == "real-tag"  # NOT "myapp:v2"
 
     def test_tag_none_when_only_tool_use_tag(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Session with no {type:'tag'} entry but tool_use input has tag — returns None."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1312,8 +1291,7 @@ class TestTagExtraction:
                 }
             ),
             json.dumps(
-                {"type": "tag", "tag": "experiment", "sessionId": sid}, **_COMPACT
-            ),
+                {"type": "tag", "tag": "experiment", "sessionId": sid}, **_COMPACT ),
         ]
         file_path.write_text("\n".join(lines) + "\n")
 
@@ -1331,8 +1309,7 @@ class TestCreatedAtExtraction:
     """Tests for created_at field extraction from first entry timestamp."""
 
     def test_created_at_from_iso_timestamp(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """created_at is parsed from ISO timestamp in first entry (epoch ms)."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1367,8 +1344,7 @@ class TestCreatedAtExtraction:
         assert isinstance(sessions[0].created_at, int)
 
     def test_created_at_leq_last_modified(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """created_at <= last_modified (creation precedes mtime)."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1396,8 +1372,7 @@ class TestCreatedAtExtraction:
         assert sessions[0].created_at <= sessions[0].last_modified
 
     def test_created_at_when_first_line_lacks_timestamp(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """created_at is found in a later head record when the first line is a
         metadata-only entry (e.g. permission-mode) with no timestamp field.
 
@@ -1427,8 +1402,7 @@ class TestCreatedAtExtraction:
         assert sessions[0].created_at == 1768473000000
 
     def test_created_at_none_when_missing(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """created_at is None when no head entry has a timestamp field."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1555,14 +1529,12 @@ class TestGetSessionInfo:
             haijun_config_dir, os.path.realpath(project_path)
         )
         sid, _ = _make_session_file(
-            project_dir, first_prompt="sidechain", is_sidechain=True
-        )
+            project_dir, first_prompt="sidechain", is_sidechain=True )
 
         assert get_session_info(sid, directory=project_path) is None
 
     def test_directory_not_containing_session(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Returns None when directory provided but session not in it."""
         project_a = str(tmp_path / "proj-a")
         project_b = str(tmp_path / "proj-b")
@@ -1652,8 +1624,7 @@ class TestListSubagents:
         assert list_subagents(sid) == []
 
     def test_session_exists_no_subagents_dir(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Session exists but has no subagents directory → empty list."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1700,8 +1671,7 @@ class TestListSubagents:
         assert result == ["keep"]
 
     def test_recurses_into_subdirectories(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Agent files in nested subdirectories are found."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
@@ -1764,8 +1734,7 @@ class TestGetSubagentMessages:
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
 
         u1 = str(uuid.uuid4())
         a1 = str(uuid.uuid4())
@@ -1791,14 +1760,12 @@ class TestGetSubagentMessages:
         assert messages[3].type == "assistant"
 
     def test_finds_agent_in_nested_subdirectory(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """Agent file in a nested subdirectory is found by ID."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
         nested = subagents_dir / "workflows" / "run-1"
         nested.mkdir(parents=True)
 
@@ -1840,15 +1807,13 @@ class TestGetSubagentMessages:
             )
 
     def test_parent_ids_recovered_from_meta_sidecar(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """toolUseId / parentAgentId from agent-<id>.meta.json are stamped on
         every returned message as parent_tool_use_id / parent_agent_id."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
         self._write_agent(
             subagents_dir,
             "abc",
@@ -1867,14 +1832,12 @@ class TestGetSubagentMessages:
         assert all(m.parent_agent_id == "a-parent" for m in messages)
 
     def test_parent_ids_from_nested_meta_sidecar(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """The sidecar is read from beside the transcript even when nested."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
         nested = subagents_dir / "workflows" / "run-1"
         nested.mkdir(parents=True)
         self._write_agent(nested, "deep", sid, {"toolUseId": "toolu_nested"})
@@ -1893,13 +1856,11 @@ class TestGetSubagentMessages:
         ],
     )
     def test_parent_ids_none_when_sidecar_missing_or_unusable(
-        self, haijun_config_dir: Path, tmp_path: Path, meta
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path, meta ):
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
         self._write_agent(subagents_dir, "x", sid, meta)
 
         messages = get_subagent_messages(sid, "x", directory=project_path)
@@ -1908,15 +1869,13 @@ class TestGetSubagentMessages:
         assert all(m.parent_agent_id is None for m in messages)
 
     def test_unreadable_sidecar_degrades_to_none(
-        self, haijun_config_dir: Path, tmp_path: Path
-    ):
+        self, haijun_config_dir: Path, tmp_path: Path ):
         """A sidecar that exists but cannot be read (here: a directory) must
         not make the best-effort read helper raise."""
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
         self._write_agent(subagents_dir, "x", sid, None)
         (subagents_dir / "agent-x.meta.json").mkdir()
 
@@ -1930,8 +1889,7 @@ class TestGetSubagentMessages:
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
 
         u1 = str(uuid.uuid4())
         a1 = str(uuid.uuid4())
@@ -1951,8 +1909,7 @@ class TestGetSubagentMessages:
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
 
         uuids = [str(uuid.uuid4()) for _ in range(6)]
         entries = []
@@ -1973,8 +1930,7 @@ class TestGetSubagentMessages:
         assert [m.uuid for m in page] == uuids[:2]
 
         page = get_subagent_messages(
-            sid, "p", directory=project_path, limit=2, offset=2
-        )
+            sid, "p", directory=project_path, limit=2, offset=2 )
         assert [m.uuid for m in page] == uuids[2:4]
 
         page = get_subagent_messages(sid, "p", directory=project_path, offset=4)
@@ -1988,8 +1944,7 @@ class TestGetSubagentMessages:
         project_path = str(tmp_path / "proj")
         Path(project_path).mkdir(parents=True)
         sid, subagents_dir = _make_session_with_subagents(
-            haijun_config_dir, project_path
-        )
+            haijun_config_dir, project_path )
         (subagents_dir / "agent-empty.jsonl").write_text("")
 
         assert get_subagent_messages(sid, "empty", directory=project_path) == []

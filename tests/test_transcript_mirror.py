@@ -50,8 +50,7 @@ def _p(*parts: str) -> str:
 class TestFilePathToSessionKey:
     def test_main_transcript(self) -> None:
         assert file_path_to_session_key(
-            _p("-home-user-repo", "abc-123.jsonl"), PROJECTS_DIR
-        ) == {
+            _p("-home-user-repo", "abc-123.jsonl"), PROJECTS_DIR ) == {
             "project_key": "-home-user-repo",
             "session_id": "abc-123",
         }
@@ -84,8 +83,7 @@ class TestFilePathToSessionKey:
         # nor subagent (>=4 parts).
         assert (
             file_path_to_session_key(_p("proj", "sess", "weird.jsonl"), PROJECTS_DIR)
-            is None
-        )
+            is None )
 
     def test_main_transcript_without_jsonl_suffix_returns_none(self) -> None:
         assert file_path_to_session_key(_p("proj", "sess.txt"), PROJECTS_DIR) is None
@@ -103,8 +101,7 @@ class TestFilePathToSessionKey:
         not change the derived key (relpath normalizes it)."""
         with_slash = PROJECTS_DIR + os.sep
         assert file_path_to_session_key(
-            _p("-home-user-repo", "abc-123.jsonl"), with_slash
-        ) == {"project_key": "-home-user-repo", "session_id": "abc-123"}
+            _p("-home-user-repo", "abc-123.jsonl"), with_slash ) == {"project_key": "-home-user-repo", "session_id": "abc-123"}
         # And a subagent path still parses identically.
         path = _p("-home-user-repo", "abc-123", "subagents", "agent-xyz.jsonl")
         assert file_path_to_session_key(path, with_slash) == {
@@ -127,8 +124,7 @@ class TestGetProjectsDirEnvOverride:
             )
 
     def test_falls_back_to_os_environ_when_override_absent(
-        self, tmp_path: Path
-    ) -> None:
+        self, tmp_path: Path ) -> None:
         ambient = tmp_path / "ambient"
         with patch.dict(os.environ, {"HAIJUN_CONFIG_DIR": str(ambient)}):
             assert _get_projects_dir({}) == ambient / "projects"
@@ -193,8 +189,7 @@ class TestTranscriptMirrorBatcher:
     async def test_enqueue_then_flush_calls_store_append(self) -> None:
         store = _RecordingStore()
         batcher = TranscriptMirrorBatcher(
-            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error
-        )
+            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error )
         batcher.enqueue(_main_path(), [{"type": "user", "n": 1}])
         batcher.enqueue(_main_path(), [{"type": "assistant", "n": 2}])
         # Nothing flushed yet
@@ -211,8 +206,7 @@ class TestTranscriptMirrorBatcher:
     async def test_empty_entries_batch_skips_append(self) -> None:
         store = _RecordingStore()
         batcher = TranscriptMirrorBatcher(
-            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error
-        )
+            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error )
         batcher.enqueue(_main_path(), [])
         await batcher.flush()
         # No append for empty batch — adapters must not see phantom keys.
@@ -222,8 +216,7 @@ class TestTranscriptMirrorBatcher:
     async def test_coalesces_per_file_path_preserving_order(self) -> None:
         store = _RecordingStore()
         batcher = TranscriptMirrorBatcher(
-            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error
-        )
+            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error )
         batcher.enqueue(_main_path("p", "a"), [{"type": "x", "n": 1}])
         batcher.enqueue(_main_path("p", "b"), [{"type": "x", "n": 2}])
         batcher.enqueue(_main_path("p", "a"), [{"type": "x", "n": 3}])
@@ -278,8 +271,7 @@ class TestTranscriptMirrorBatcher:
             errors.append((key, err))
 
         batcher = TranscriptMirrorBatcher(
-            store=FailingStore(), projects_dir=PROJECTS_DIR, on_error=on_error
-        )
+            store=FailingStore(), projects_dir=PROJECTS_DIR, on_error=on_error )
         batcher.enqueue(_main_path(), [{"type": "x"}])
         with patch(_BATCHER_SLEEP, new=AsyncMock()):
             await batcher.flush()  # must not raise
@@ -338,8 +330,7 @@ class TestTranscriptMirrorBatcher:
                     # is still in flight — exactly the adapter shape the
                     # no-retry-on-timeout rule protects against.
                     await anyio.to_thread.run_sync(
-                        time.sleep, 0.1, abandon_on_cancel=True
-                    )
+                        time.sleep, 0.1, abandon_on_cancel=True )
                 finally:
                     in_flight -= 1
 
@@ -381,8 +372,7 @@ class TestTranscriptMirrorBatcher:
 
         store = FlakyStore()
         batcher = TranscriptMirrorBatcher(
-            store=store, projects_dir=PROJECTS_DIR, on_error=on_error
-        )
+            store=store, projects_dir=PROJECTS_DIR, on_error=on_error )
         batcher.enqueue(_main_path(), [{"type": "x"}])
         sleep_mock = AsyncMock()
         with patch(_BATCHER_SLEEP, new=sleep_mock):
@@ -412,8 +402,7 @@ class TestTranscriptMirrorBatcher:
             errors.append((key, err))
 
         batcher = TranscriptMirrorBatcher(
-            store=AlwaysFailingStore(), projects_dir=PROJECTS_DIR, on_error=on_error
-        )
+            store=AlwaysFailingStore(), projects_dir=PROJECTS_DIR, on_error=on_error )
         batcher.enqueue(_main_path(), [{"type": "x"}])
         with patch(_BATCHER_SLEEP, new=AsyncMock()):
             await batcher.flush()
@@ -426,8 +415,7 @@ class TestTranscriptMirrorBatcher:
     async def test_close_flushes_pending(self) -> None:
         store = _RecordingStore()
         batcher = TranscriptMirrorBatcher(
-            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error
-        )
+            store=store, projects_dir=PROJECTS_DIR, on_error=_noop_error )
         batcher.enqueue(_main_path(), [{"type": "x"}])
         await batcher.close()
         assert len(store.append_calls) == 1
@@ -455,8 +443,7 @@ class TestTranscriptMirrorBatcher:
             errors.append((key, err))
 
         batcher = TranscriptMirrorBatcher(
-            store=store, projects_dir=PROJECTS_DIR, on_error=on_error
-        )
+            store=store, projects_dir=PROJECTS_DIR, on_error=on_error )
         batcher.enqueue("/elsewhere/x.jsonl", [{"type": "x"}])
         await batcher.flush()
         assert store.append_calls == []
@@ -479,8 +466,7 @@ class TestTranscriptMirrorBatcher:
             store=SlowStore(),
             projects_dir=PROJECTS_DIR,
             on_error=_noop_error,
-            max_pending_entries=0,  # every enqueue triggers an eager flush
-        )
+            max_pending_entries=0,  # every enqueue triggers an eager flush )
         batcher.enqueue(_main_path(), [{"type": "x", "n": 1}])
         first = batcher._flush_task
         await anyio.sleep(0)  # let first drain detach + block on gate
@@ -541,8 +527,7 @@ class TestBuildMirrorBatcherFlushMode:
         ids=["default", "batched", "eager"],
     )
     def test_flush_mode_sets_thresholds(
-        self, kwargs: dict[str, Any], want_entries: int, want_bytes: int
-    ) -> None:
+        self, kwargs: dict[str, Any], want_entries: int, want_bytes: int ) -> None:
         batcher = build_mirror_batcher(
             store=InMemorySessionStore(),
             materialized=None,
@@ -607,8 +592,7 @@ class TestSessionMirrorFlag:
 
 
 def _make_mock_transport(
-    messages: list[dict[str, Any]], *, yields_between: int = 0
-) -> Any:
+    messages: list[dict[str, Any]], *, yields_between: int = 0 ) -> Any:
     """Mock transport. ``yields_between`` inserts that many ``sleep(0)``
     cycles before each frame (except the first) — needed by eager-flush
     tests so background drain tasks have enough event-loop turns to

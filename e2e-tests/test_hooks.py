@@ -19,8 +19,7 @@ async def test_hook_with_permission_decision_and_reason():
     hook_invocations = []
 
     async def test_hook(
-        input_data: HookInput, tool_use_id: str | None, context: HookContext
-    ) -> HookJSONOutput:
+        input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
         """Hook that uses permissionDecision and reason fields."""
         tool_name = input_data.get("tool_name", "")
         print(f"Hook called for tool: {tool_name}")
@@ -76,8 +75,7 @@ async def test_hook_with_continue_and_stop_reason():
     hook_invocations = []
 
     async def post_tool_hook(
-        input_data: HookInput, tool_use_id: str | None, context: HookContext
-    ) -> HookJSONOutput:
+        input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
         """PostToolUse hook that stops execution with stopReason."""
         tool_name = input_data.get("tool_name", "")
         hook_invocations.append(tool_name)
@@ -119,8 +117,7 @@ async def test_hook_with_additional_context():
     hook_invocations = []
 
     async def context_hook(
-        input_data: HookInput, tool_use_id: str | None, context: HookContext
-    ) -> HookJSONOutput:
+        input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
         """Hook that provides additional context."""
         hook_invocations.append("context_added")
 

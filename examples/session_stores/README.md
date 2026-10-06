@@ -201,7 +201,7 @@ This mirrors the S3 reference adapter in the TypeScript SDK's
 
 ## Redis — `redis_session_store.py`
 
-Backed by [`redis-py`](https://github.com/redis/redis-py)'s `redis.asyncio`
+Backed by [`redis-py`](https://github.com/takebox/redis-py)'s `redis.asyncio`
 client.
 
 ### Installation

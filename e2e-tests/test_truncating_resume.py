@@ -57,8 +57,7 @@ async def _two_turn_session(cwd: str) -> tuple[str, str, str]:
     turn_2_idx = next(
         i
         for i, m in enumerate(chain)
-        if m.type == "user" and m.message.get("content") == TURN_2
-    )
+        if m.type == "user" and m.message.get("content") == TURN_2 )
     assert turn_2_idx == uuids.index(keep_at) + 1, (
         "unexpected transcript entries between turn 1 and turn 2: "
         f"{[(m.type, m.uuid) for m in chain]}"

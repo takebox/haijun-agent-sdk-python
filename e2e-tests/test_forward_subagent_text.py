@@ -51,8 +51,7 @@ async def _collect(forward_subagent_text: bool):
                 for block in message.content:
                     if (
                         isinstance(block, ToolUseBlock)
-                        and block.name in _AGENT_TOOL_NAMES
-                    ):
+                        and block.name in _AGENT_TOOL_NAMES ):
                         agent_tool_use_ids.add(block.id)
             else:
                 attributed.append(message)

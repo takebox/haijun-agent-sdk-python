@@ -33,8 +33,7 @@ async def with_reasonable_budget():
     print("=== With Reasonable Budget ($0.10) ===")
 
     options = HaijunAgentOptions(
-        max_budget_usd=0.10,  # 10 cents - plenty for a simple query
-    )
+        max_budget_usd=0.10,  # 10 cents - plenty for a simple query )
 
     async for message in query(prompt="What is 2 + 2?", options=options):
         if isinstance(message, AssistantMessage):
@@ -53,12 +52,10 @@ async def with_tight_budget():
     print("=== With Tight Budget ($0.0001) ===")
 
     options = HaijunAgentOptions(
-        max_budget_usd=0.0001,  # Very small budget - will be exceeded quickly
-    )
+        max_budget_usd=0.0001,  # Very small budget - will be exceeded quickly )
 
     async for message in query(
-        prompt="Read the README.md file and summarize it", options=options
-    ):
+        prompt="Read the README.md file and summarize it", options=options ):
         if isinstance(message, AssistantMessage):
             for block in message.content:
                 if isinstance(block, TextBlock):

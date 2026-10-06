@@ -86,8 +86,7 @@ CLI_VERSION_PATTERN = re.compile(r'__cli_version__ = "([^"]+)"')
 def _fail_unpinned(reason: str) -> NoReturn:
     """Report an unusable CLI pin and stop the build."""
     print(
-        f"Error: cannot determine the CLI version to bundle: {reason}", file=sys.stderr
-    )
+        f"Error: cannot determine the CLI version to bundle: {reason}", file=sys.stderr )
     print(
         f"Expected a concrete version in {CLI_VERSION_FILE} "
         f'(written as `__cli_version__ = "2.1.207"`). '
@@ -115,8 +114,7 @@ def get_bundled_cli_version() -> str:
 
     try:
         return version_validation.validate_version(
-            match.group(1), source=str(CLI_VERSION_FILE), allow_dist_tag=False
-        )
+            match.group(1), source=str(CLI_VERSION_FILE), allow_dist_tag=False )
     except ValueError as exc:
         _fail_unpinned(str(exc))
 

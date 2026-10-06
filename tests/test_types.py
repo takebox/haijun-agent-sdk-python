@@ -108,8 +108,7 @@ class TestMessageTypes:
     def test_tool_result_block(self):
         """Test creating a ToolResultBlock."""
         block = ToolResultBlock(
-            tool_use_id="tool-123", content="File contents here", is_error=False
-        )
+            tool_use_id="tool-123", content="File contents here", is_error=False )
         assert block.tool_use_id == "tool-123"
         assert block.content == "File contents here"
         assert block.is_error is False
@@ -443,8 +442,7 @@ class TestMcpServerStatusTypes:
             McpServerStatusConfig,  # noqa: F401
             McpStatusResponse,  # noqa: F401
             McpToolAnnotations,  # noqa: F401
-            McpToolInfo,  # noqa: F401
-        )
+            McpToolInfo,  # noqa: F401 )
 
     def test_mcp_server_status_connected(self):
         """Test constructing a connected McpServerStatus with full fields."""

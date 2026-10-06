@@ -75,8 +75,7 @@ class MaterializedResume:
 
 
 def apply_materialized_options(
-    options: HaijunAgentOptions, materialized: MaterializedResume
-) -> HaijunAgentOptions:
+    options: HaijunAgentOptions, materialized: MaterializedResume ) -> HaijunAgentOptions:
     """Return a copy of ``options`` repointed at a materialized temp config dir.
 
     Sets ``HAIJUN_CONFIG_DIR`` in ``env``, ``resume`` to the materialized
@@ -178,8 +177,7 @@ async def materialize_resume_session(
         # Materialize subagent transcripts if the store can enumerate them.
         if _store_implements(store, "list_subkeys"):
             await _materialize_subkeys(
-                store, tmp_base, project_dir, project_key, session_id, timeout_s
-            )
+                store, tmp_base, project_dir, project_key, session_id, timeout_s )
     except BaseException:
         # Any failure after mkdtemp leaves tmp_base (which may already
         # contain a .credentials.json copy) on disk with no path for the
@@ -219,8 +217,7 @@ _RETRYABLE_RMTREE_ERRNOS = frozenset(
 
 
 async def _rmtree_with_retry(
-    path: Path, *, retries: int = 4, delay: float = 0.1
-) -> None:
+    path: Path, *, retries: int = 4, delay: float = 0.1 ) -> None:
     """Best-effort ``shutil.rmtree`` with retries on transient lock errors.
 
     On Windows, AV/indexer can briefly hold a handle on freshly-written
@@ -238,8 +235,7 @@ async def _rmtree_with_retry(
             return
         except OSError as e:
             if e.errno not in _RETRYABLE_RMTREE_ERRNOS and not isinstance(
-                e, PermissionError
-            ):
+                e, PermissionError ):
                 break
         try:
             await anyio.sleep(delay)
@@ -252,8 +248,7 @@ async def _rmtree_with_retry(
 
 
 async def _load_candidate(
-    store: SessionStore, project_key: str, session_id: str, timeout_s: float
-) -> tuple[str, list[Any]] | None:
+    store: SessionStore, project_key: str, session_id: str, timeout_s: float ) -> tuple[str, list[Any]] | None:
     """Load entries for ``session_id``; return ``None`` if empty/missing."""
     entries = await _with_timeout(
         store.load({"project_key": project_key, "session_id": session_id}),
@@ -266,8 +261,7 @@ async def _load_candidate(
 
 
 async def _resolve_continue_candidate(
-    store: SessionStore, project_key: str, timeout_s: float
-) -> tuple[str, list[Any]] | None:
+    store: SessionStore, project_key: str, timeout_s: float ) -> tuple[str, list[Any]] | None:
     """Pick the most-recently-modified non-sidechain session.
 
     Sidechain transcripts are mirrored as ordinary top-level keys and often
@@ -380,8 +374,7 @@ def _copy_auth_files(tmp_base: Path, opt_env: dict[str, str]) -> None:
     # reconcile against the empty tmp_base plugin cache.
     for name in ("settings.json", "cowork_settings.json"):
         _copy_if_present(
-            source_config_dir / name, tmp_base / name, _strip_settings_for_resume
-        )
+            source_config_dir / name, tmp_base / name, _strip_settings_for_resume )
 
 
 # User-settings keys that only misbehave under the redirected HAIJUN_CONFIG_DIR:
@@ -472,8 +465,7 @@ def _read_if_present(src: Path) -> bytes | None:
 
 
 def _copy_if_present(
-    src: Path, dst: Path, transform: Callable[[bytes], bytes] | None = None
-) -> None:
+    src: Path, dst: Path, transform: Callable[[bytes], bytes] | None = None ) -> None:
     """Copy ``src`` to ``dst`` (mode 0o600) if it exists, through an optional
     ``transform``. See :func:`_read_if_present` for the skip policy."""
     content = _read_if_present(src)
@@ -549,8 +541,7 @@ async def _materialize_subkeys(
         # '.jsonl', a hidden dotfile that passes a naive prefix check.
         if not _is_safe_subpath(subpath, session_dir):
             logger.warning(
-                "[SessionStore] skipping unsafe subpath from list_subkeys: %r", subpath
-            )
+                "[SessionStore] skipping unsafe subpath from list_subkeys: %r", subpath )
             continue
 
         sub_key: SessionKey = {

@@ -309,8 +309,7 @@ class TestGetSessionInfoFromStore:
     async def test_returns_none_for_unknown(self) -> None:
         store = InMemorySessionStore()
         info = await get_session_info_from_store(
-            store, str(uuid_mod.uuid4()), directory=DIR
-        )
+            store, str(uuid_mod.uuid4()), directory=DIR )
         assert info is None
 
     async def test_reflects_custom_title(self) -> None:
@@ -371,15 +370,13 @@ class TestGetSessionMessagesFromStore:
         sid = str(uuid_mod.uuid4())
         await _seed_chain(store, sid, n=3)
         msgs = await get_session_messages_from_store(
-            store, sid, directory=DIR, limit=2, offset=2
-        )
+            store, sid, directory=DIR, limit=2, offset=2 )
         assert len(msgs) == 2
 
     async def test_unknown_session_empty(self) -> None:
         store = InMemorySessionStore()
         msgs = await get_session_messages_from_store(
-            store, str(uuid_mod.uuid4()), directory=DIR
-        )
+            store, str(uuid_mod.uuid4()), directory=DIR )
         assert msgs == []
 
 
@@ -413,8 +410,7 @@ class TestSubagentsFromStore:
         assert ids == ["abc123"]
 
         msgs = await get_subagent_messages_from_store(
-            store, sid, "abc123", directory=DIR
-        )
+            store, sid, "abc123", directory=DIR )
         assert len(msgs) == 2
         assert msgs[0].type == "user"
         assert msgs[1].type == "assistant"
@@ -435,8 +431,7 @@ class TestSubagentsFromStore:
         assert ids == ["nested"]
 
         msgs = await get_subagent_messages_from_store(
-            store, sid, "nested", directory=DIR
-        )
+            store, sid, "nested", directory=DIR )
         assert len(msgs) == 1
 
     async def test_filters_agent_metadata_entries(self) -> None:
@@ -547,8 +542,7 @@ class TestSubagentsFromStore:
         assert await list_subagents_from_store(store, "not-a-uuid", directory=DIR) == []
         assert (
             await get_subagent_messages_from_store(
-                store, "not-a-uuid", "x", directory=DIR
-            )
+                store, "not-a-uuid", "x", directory=DIR )
             == []
         )
 
@@ -572,8 +566,7 @@ class TestSubagentsFromStore:
             [_user("hi", u, None, sid)],
         )
         msgs = await get_subagent_messages_from_store(
-            store, sid, "direct", directory=DIR
-        )
+            store, sid, "direct", directory=DIR )
         assert len(msgs) == 1
 
 
@@ -793,8 +786,7 @@ class TestForkSessionViaStore:
 
         result = await fork_session_via_store(store, sid, directory=DIR, title="Forked")
         msgs = await get_session_messages_from_store(
-            store, result.session_id, directory=DIR
-        )
+            store, result.session_id, directory=DIR )
         assert len(msgs) == 4
 
     async def test_up_to_message_id(self) -> None:

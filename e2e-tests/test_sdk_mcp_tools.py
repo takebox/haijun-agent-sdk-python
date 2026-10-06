@@ -77,8 +77,7 @@ async def test_sdk_mcp_permission_enforcement():
         model="haijun-opus-5",
         mcp_servers={"test": server},
         disallowed_tools=["mcp__test__echo"],  # Block echo tool
-        allowed_tools=["mcp__test__greet"],  # But allow greet
-    )
+        allowed_tools=["mcp__test__greet"],  # But allow greet )
 
     async with HaijunSDKClient(options=options) as client:
         await client.query(

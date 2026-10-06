@@ -73,8 +73,7 @@ class TestAcceptedVersions:
         ],
     )
     def test_surrounding_whitespace_is_stripped_before_writing(
-        self, version_file: Path, argument: str, written: str
-    ) -> None:
+        self, version_file: Path, argument: str, written: str ) -> None:
         """The stripped value is written, so a trailing newline from a file read
         never lands inside the string literal."""
         update_cli_version.update_cli_version(argument, version_file)
@@ -144,8 +143,7 @@ class TestRejectedVersions:
         ],
     )
     def test_rejected_and_file_untouched(
-        self, version_file: Path, version: str
-    ) -> None:
+        self, version_file: Path, version: str ) -> None:
         with pytest.raises(ValueError, match="Invalid CLI version"):
             update_cli_version.update_cli_version(version, version_file)
         assert version_file.read_text() == ORIGINAL
@@ -211,8 +209,7 @@ class TestReplacementIsLiteral:
             return version
 
         monkeypatch.setattr(
-            update_cli_version.version_validation, "validate_version", accept
-        )
+            update_cli_version.version_validation, "validate_version", accept )
 
     @pytest.mark.usefixtures("no_validation")
     @pytest.mark.parametrize(
@@ -228,23 +225,20 @@ class TestReplacementIsLiteral:
         ],
     )
     def test_written_file_imports_back_to_the_exact_string(
-        self, version_file: Path, version: str
-    ) -> None:
+        self, version_file: Path, version: str ) -> None:
         update_cli_version.update_cli_version(version, version_file)
         assert import_version(version_file) == version
 
     @pytest.mark.usefixtures("no_validation")
     def test_backreference_is_not_expanded_into_the_file(
-        self, version_file: Path
-    ) -> None:
+        self, version_file: Path ) -> None:
         """A string replacement would splice the matched assignment into itself."""
         update_cli_version.update_cli_version("2.0.0\\g<0>", version_file)
         text = version_file.read_text()
         assert text.count("__cli_version__") == 1
 
     def test_replacement_is_a_callable(
-        self, monkeypatch: pytest.MonkeyPatch, version_file: Path
-    ) -> None:
+        self, monkeypatch: pytest.MonkeyPatch, version_file: Path ) -> None:
         """Guard the mechanism itself, not only its observable output."""
         spy = _SubnSpy(update_cli_version.ASSIGNMENT_PATTERN)
         monkeypatch.setattr(update_cli_version, "ASSIGNMENT_PATTERN", spy)

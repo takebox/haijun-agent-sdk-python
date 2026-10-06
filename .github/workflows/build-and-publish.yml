@@ -112,8 +112,7 @@ jobs:
           # Fetch current usage from PyPI JSON API
           try:
               with urllib.request.urlopen(
-                  "https://pypi.org/pypi/haijun-agent-sdk/json", timeout=30
-              ) as r:
+                  "https://pypi.org/pypi/haijun-agent-sdk/json", timeout=30 ) as r:
                   data = json.load(r)
           except Exception as exc:
               print(f"::warning::Could not fetch PyPI metadata: {exc}")
@@ -123,8 +122,7 @@ jobs:
           current_total = sum(
               f["size"]
               for files in data["releases"].values()
-              for f in files
-          )
+              for f in files )
 
           # Collect filenames already uploaded for the current version so we
           # don't double-count them when summing local artifacts (re-run after

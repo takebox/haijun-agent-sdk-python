@@ -49,8 +49,7 @@ class InternalClient:
         # options never reach a pre-constructed transport, so loading the
         # store and writing .credentials.json to a temp dir would be wasted.
         materialized = (
-            await materialize_resume_session(options) if transport is None else None
-        )
+            await materialize_resume_session(options) if transport is None else None )
         inner = self._process_query_inner(prompt, options, transport, materialized)
         try:
             async for msg in inner:
@@ -82,8 +81,7 @@ class InternalClient:
 
         if materialized is not None:
             configured_options = apply_materialized_options(
-                configured_options, materialized
-            )
+                configured_options, materialized )
 
         # Use provided transport or create subprocess transport
         if transport is not None:
@@ -100,8 +98,7 @@ class InternalClient:
         # Extract SDK MCP servers from configured options
         sdk_mcp_servers = {}
         if configured_options.mcp_servers and isinstance(
-            configured_options.mcp_servers, dict
-        ):
+            configured_options.mcp_servers, dict ):
             for name, config in configured_options.mcp_servers.items():
                 if isinstance(config, dict) and config.get("type") == "sdk":
                     sdk_mcp_servers[name] = config["instance"]  # type: ignore[typeddict-item]

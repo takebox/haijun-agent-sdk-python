@@ -69,8 +69,7 @@ class TestGetCliVersion:
         ],
     )
     def test_surrounding_whitespace_is_stripped(
-        self, monkeypatch: pytest.MonkeyPatch, version: str, expected: str
-    ) -> None:
+        self, monkeypatch: pytest.MonkeyPatch, version: str, expected: str ) -> None:
         monkeypatch.setenv("HAIJUN_CLI_VERSION", version)
         assert download_cli.get_cli_version() == expected
 
@@ -202,8 +201,7 @@ def _fake_irm(body: bytes = PS_BODY) -> _RunSideEffect:
 
 @contextmanager
 def _install(
-    system: str, version: str, side_effect: _RunSideEffect
-) -> Iterator[MagicMock]:
+    system: str, version: str, side_effect: _RunSideEffect ) -> Iterator[MagicMock]:
     """Pin download_cli() to one platform's path, yielding the patched run.
 
     The two platform paths differ in what they run, not in how they are driven:
@@ -219,16 +217,14 @@ def _install(
 
 
 def _unix_install(
-    version: str, side_effect: _RunSideEffect | None = None
-) -> AbstractContextManager[MagicMock]:
+    version: str, side_effect: _RunSideEffect | None = None ) -> AbstractContextManager[MagicMock]:
     """Pin download_cli() to the Unix path; ``side_effect`` defaults to a curl
     that writes a real shebang script."""
     return _install("Linux", version, side_effect or _fake_curl())
 
 
 def _windows_install(
-    version: str, side_effect: _RunSideEffect | None = None
-) -> AbstractContextManager[MagicMock]:
+    version: str, side_effect: _RunSideEffect | None = None ) -> AbstractContextManager[MagicMock]:
     """Pin download_cli() to the Windows path, yielding the patched run."""
     return _install("Windows", version, side_effect or _fake_irm())
 
@@ -471,8 +467,7 @@ class TestWindowsInstall:
 
     @pytest.mark.parametrize("version", ["1.2.3", DEV_VERSION])
     def test_version_is_carried_in_the_environment_not_the_command_text(
-        self, version: str
-    ) -> None:
+        self, version: str ) -> None:
         """Regression guard: the version must reach PowerShell through the
         environment, never spliced into the `-Command` string it parses. The
         name in the command text and the name in the environment are the same
@@ -655,8 +650,7 @@ class TestCommandLine:
         )
 
     def test_invalid_version_exits_nonzero_without_a_traceback(
-        self, tmp_path: Path
-    ) -> None:
+        self, tmp_path: Path ) -> None:
         result = self._run(tmp_path, "1.0.0; id")
 
         assert result.returncode == 1
@@ -680,8 +674,7 @@ class TestCommandLine:
         assert "1.0.0; id" in error_line
 
     def test_nothing_is_installed_before_the_version_is_rejected(
-        self, tmp_path: Path
-    ) -> None:
+        self, tmp_path: Path ) -> None:
         """The banner prints, then it bails -- no download is announced."""
         result = self._run(tmp_path, "--help")
 

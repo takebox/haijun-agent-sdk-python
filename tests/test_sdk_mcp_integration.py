@@ -66,8 +66,7 @@ class SdkMcpClient:
         return await self.query._handle_sdk_mcp_request(server, message)
 
     async def request(
-        self, server: str, method: str, params: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+        self, server: str, method: str, params: dict[str, Any] | None = None ) -> dict[str, Any]:
         message = {"jsonrpc": "2.0", "id": next(self._ids), "method": method}
         if params is not None:
             message["params"] = params
@@ -78,8 +77,7 @@ class SdkMcpClient:
         return response
 
     async def notify(
-        self, server: str, method: str, params: dict[str, Any] | None = None
-    ) -> dict[str, Any] | None:
+        self, server: str, method: str, params: dict[str, Any] | None = None ) -> dict[str, Any] | None:
         message: dict[str, Any] = {"jsonrpc": "2.0", "method": method}
         if params is not None:
             message["params"] = params
@@ -95,8 +93,7 @@ class SdkMcpClient:
         return response["result"]["tools"]
 
     async def call_tool(
-        self, server: str, name: str, arguments: Any = None
-    ) -> dict[str, Any]:
+        self, server: str, name: str, arguments: Any = None ) -> dict[str, Any]:
         params = {"name": name, "arguments": {} if arguments is None else arguments}
         response = await self.request(server, "tools/call", params)
         assert "error" not in response, response
@@ -420,8 +417,7 @@ async def test_close_tears_down_every_bridge_without_leaks(
 
 @pytest.mark.anyio
 async def test_close_does_not_hang_on_a_tool_blocked_outside_the_event_loop(
-    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-) -> None:
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture ) -> None:
     """A tool stuck in a worker thread cannot be cancelled. Closing gives it a
     grace period and then stops waiting, instead of hanging disconnect()."""
     monkeypatch.setattr(sdk_mcp_bridge, "SHUTDOWN_GRACE_SECONDS", 0.2)
@@ -493,8 +489,7 @@ async def test_close_with_a_cancellable_tool_in_flight_is_prompt_and_quiet(
     assert (
         events[0] == "start"
         and events[1].startswith("cancelled")
-        and "finished" not in events
-    )
+        and "finished" not in events )
     noisy = [
         r
         for r in caplog.records
@@ -784,16 +779,13 @@ async def test_tool_annotations_take_either_spelling_on_every_mcp_version():
     hint (mcp's own class differs per major), and both reach the wire the
     same way; given both, the wire (camelCase) name wins."""
     camel = ToolAnnotations(
-        readOnlyHint=True, destructiveHint=False, maxResultSizeChars=11
-    )
+        readOnlyHint=True, destructiveHint=False, maxResultSizeChars=11 )
     snake = ToolAnnotations(
-        read_only_hint=True, destructive_hint=False, max_result_size_chars=11
-    )
+        read_only_hint=True, destructive_hint=False, max_result_size_chars=11 )
     assert camel == snake
     assert snake.model_extra == {}
     both = ToolAnnotations(
-        openWorldHint=True, open_world_hint=False, max_result_size_chars=2
-    )
+        openWorldHint=True, open_world_hint=False, max_result_size_chars=2 )
     assert both == ToolAnnotations(openWorldHint=True, maxResultSizeChars=2)
 
     tools = []
@@ -1336,8 +1328,7 @@ def _hand_built_server() -> Server:
             return call_result(params.arguments or {})
 
         async def on_list_resources(
-            ctx: Any, params: Any
-        ) -> mcp.types.ListResourcesResult:
+            ctx: Any, params: Any ) -> mcp.types.ListResourcesResult:
             return mcp.types.ListResourcesResult(resources=resources)
 
         return Server(

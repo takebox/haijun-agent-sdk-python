@@ -323,8 +323,7 @@ def fork_session(
             or _extract_last_json_string_field(tail, "aiTitle")
             or _extract_last_json_string_field(head, "aiTitle")
             or _extract_first_prompt_from_head(head)
-            or None
-        )
+            or None )
 
     forked_session_id, lines = _build_fork_lines(
         transcript,
@@ -423,8 +422,7 @@ def _build_fork_lines(
         # Remap logicalParentUuid (compact-boundary backpointer).
         logical_parent = original.get("logicalParentUuid")
         new_logical_parent = (
-            uuid_mapping.get(logical_parent) if logical_parent else logical_parent
-        )
+            uuid_mapping.get(logical_parent) if logical_parent else logical_parent )
 
         forked = {
             **original,
@@ -588,8 +586,7 @@ def _derive_title_from_entries(raw: list[Any]) -> str | None:
 
 
 def _parse_fork_transcript(
-    content: bytes, session_id: str
-) -> tuple[list[dict[str, Any]], list[Any]]:
+    content: bytes, session_id: str ) -> tuple[list[dict[str, Any]], list[Any]]:
     """Parse JSONL content into transcript entries + content-replacement records.
 
     Only keeps entries that have a uuid and are transcript message types.
@@ -653,8 +650,7 @@ def _append_to_session(
                 continue  # already tried above
             wt_project_dir = _find_project_dir(wt)
             if wt_project_dir is not None and _try_append(
-                wt_project_dir / file_name, data
-            ):
+                wt_project_dir / file_name, data ):
                 return
 
         raise FileNotFoundError(
@@ -748,8 +744,7 @@ def _sanitize_unicode(value: str) -> str:
         current = unicodedata.normalize("NFKC", current)
         # Strip Cf (format), Co (private use), Cn (unassigned) categories
         current = "".join(
-            c for c in current if unicodedata.category(c) not in _FORMAT_CATEGORIES
-        )
+            c for c in current if unicodedata.category(c) not in _FORMAT_CATEGORIES )
         # Explicit ranges (redundant with category check but matches TS)
         current = _UNICODE_STRIP_RE.sub("", current)
         if current == previous:

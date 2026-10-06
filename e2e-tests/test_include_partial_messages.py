@@ -72,15 +72,13 @@ async def test_include_partial_messages_stream_events():
     # Check for thinking block in at least one AssistantMessage
     has_thinking = any(
         any(isinstance(block, ThinkingBlock) for block in msg.content)
-        for msg in assistant_messages
-    )
+        for msg in assistant_messages )
     assert has_thinking, "No ThinkingBlock found in AssistantMessages"
 
     # Check for text block (the joke) in at least one AssistantMessage
     has_text = any(
         any(isinstance(block, TextBlock) for block in msg.content)
-        for msg in assistant_messages
-    )
+        for msg in assistant_messages )
     assert has_text, "No TextBlock found in AssistantMessages"
 
     # Should end with ResultMessage

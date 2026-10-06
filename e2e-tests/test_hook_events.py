@@ -21,8 +21,7 @@ async def test_pre_tool_use_hook_with_additional_context():
     hook_invocations: list[dict[str, Any]] = []
 
     async def pre_tool_hook(
-        input_data: HookInput, tool_use_id: str | None, context: HookContext
-    ) -> HookJSONOutput:
+        input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
         """PreToolUse hook that provides additionalContext."""
         tool_name = input_data.get("tool_name", "")
         hook_invocations.append(
@@ -68,8 +67,7 @@ async def test_post_tool_use_hook_with_tool_use_id():
     hook_invocations: list[dict[str, Any]] = []
 
     async def post_tool_hook(
-        input_data: HookInput, tool_use_id: str | None, context: HookContext
-    ) -> HookJSONOutput:
+        input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
         """PostToolUse hook that verifies tool_use_id is present."""
         tool_name = input_data.get("tool_name", "")
         hook_invocations.append(
@@ -116,8 +114,7 @@ async def test_notification_hook():
     hook_invocations: list[dict[str, Any]] = []
 
     async def notification_hook(
-        input_data: HookInput, tool_use_id: str | None, context: HookContext
-    ) -> HookJSONOutput:
+        input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
         """Notification hook that tracks invocations."""
         hook_invocations.append(
             {
@@ -163,8 +160,7 @@ async def test_multiple_hooks_together():
     all_invocations: list[dict[str, Any]] = []
 
     async def track_hook(
-        input_data: HookInput, tool_use_id: str | None, context: HookContext
-    ) -> HookJSONOutput:
+        input_data: HookInput, tool_use_id: str | None, context: HookContext ) -> HookJSONOutput:
         """Generic hook that tracks all invocations."""
         all_invocations.append(
             {

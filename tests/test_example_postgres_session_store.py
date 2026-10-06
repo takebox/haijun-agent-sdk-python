@@ -69,8 +69,7 @@ _EXAMPLE_PATH = (
     / "postgres_session_store.py"
 )
 _spec = importlib.util.spec_from_file_location(
-    "_postgres_session_store_example", _EXAMPLE_PATH
-)
+    "_postgres_session_store_example", _EXAMPLE_PATH )
 assert _spec is not None and _spec.loader is not None
 _module = importlib.util.module_from_spec(_spec)
 sys.modules[_spec.name] = _module
@@ -210,8 +209,7 @@ class TestRoundTrip:
 
         projects_dir = str(tmp_path / "config" / "projects")
         batcher = TranscriptMirrorBatcher(
-            store=store, projects_dir=projects_dir, on_error=on_error
-        )
+            store=store, projects_dir=projects_dir, on_error=on_error )
 
         main_path = f"{projects_dir}/{project_key}/{SESSION_ID}.jsonl"
         sub_path = f"{projects_dir}/{project_key}/{SESSION_ID}/subagents/agent-1.jsonl"

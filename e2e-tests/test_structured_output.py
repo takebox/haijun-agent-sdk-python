@@ -34,8 +34,7 @@ async def test_simple_structured_output():
     options = HaijunAgentOptions(
         output_format={"type": "json_schema", "schema": schema},
         permission_mode="acceptEdits",
-        cwd=".",  # Use current directory
-    )
+        cwd=".",  # Use current directory )
 
     # Agent must use Glob/Bash to count files
     result_message = None
@@ -181,8 +180,7 @@ async def test_structured_output_with_tools():
     options = HaijunAgentOptions(
         output_format={"type": "json_schema", "schema": schema},
         permission_mode="acceptEdits",
-        cwd=tempfile.gettempdir(),  # Cross-platform temp directory
-    )
+        cwd=tempfile.gettempdir(),  # Cross-platform temp directory )
 
     result_message = None
     async for message in query(

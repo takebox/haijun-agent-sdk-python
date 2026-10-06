@@ -227,8 +227,7 @@ class SubprocessCLITransport(Transport):
         self._is_streaming = True
         self._options = options
         self._cli_path: str | None = (
-            str(options.cli_path) if options.cli_path is not None else None
-        )
+            str(options.cli_path) if options.cli_path is not None else None )
         self._cwd = str(options.cwd) if options.cwd else None
         self._process: Process | None = None
         self._stdout_stream: TextReceiveStream | None = None
@@ -240,8 +239,7 @@ class SubprocessCLITransport(Transport):
         self._max_buffer_size = (
             options.max_buffer_size
             if options.max_buffer_size is not None
-            else _DEFAULT_MAX_BUFFER_SIZE
-        )
+            else _DEFAULT_MAX_BUFFER_SIZE )
         self._write_lock: anyio.Lock = anyio.Lock()
 
     def _find_cli(self) -> str:
@@ -536,8 +534,7 @@ class SubprocessCLITransport(Transport):
         setting_sources: list[str] | None = (
             list(self._options.setting_sources)
             if self._options.setting_sources is not None
-            else None
-        )
+            else None )
 
         tracks = self._options.tracks
         if tracks is None:
@@ -640,8 +637,7 @@ class SubprocessCLITransport(Transport):
 
         if self._options.session_id:
             self._reject_windows_cmd_metacharacters(
-                "session_id", self._options.session_id
-            )
+                "session_id", self._options.session_id )
             cmd.append(f"--session-id={self._options.session_id}")
 
         # Handle settings and sandbox: merge sandbox into settings if both are provided
@@ -697,8 +693,7 @@ class SubprocessCLITransport(Transport):
         # if the CLI's declaration of these options ever changes.
         if self._options.resume_session_at:
             self._reject_windows_cmd_metacharacters(
-                "resume_session_at", self._options.resume_session_at
-            )
+                "resume_session_at", self._options.resume_session_at )
             cmd.append(f"--resume-session-at={self._options.resume_session_at}")
 
         # `is not None`, not truthiness: an empty string is forwarded so the
@@ -706,8 +701,7 @@ class SubprocessCLITransport(Transport):
         # disarming the guard the caller believes is armed.
         if self._options.resume_drops_turn is not None:
             self._reject_windows_cmd_metacharacters(
-                "resume_drops_turn", self._options.resume_drops_turn
-            )
+                "resume_drops_turn", self._options.resume_drops_turn )
             cmd.append(f"--resume-drops-turn={self._options.resume_drops_turn}")
 
         if self._options.session_store is not None:

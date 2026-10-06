@@ -34,8 +34,7 @@ async def with_options_example():
     )
 
     async for message in query(
-        prompt="Explain what Python is in one sentence.", options=options
-    ):
+        prompt="Explain what Python is in one sentence.", options=options ):
         if isinstance(message, AssistantMessage):
             for block in message.content:
                 if isinstance(block, TextBlock):

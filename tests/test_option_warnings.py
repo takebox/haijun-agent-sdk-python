@@ -145,8 +145,7 @@ class TestGetCanUseToolShadowedWarning:
                 None,
                 ["Bash(ls:*)", "Bash(git log:*)", "mcp__server__tool(param:value)", ""],
             )
-            is None
-        )
+            is None )
 
     def test_empty_allowed_tools_default_mode_returns_none(self):
         assert _get_can_use_tool_shadowed_warning(None, []) is None
@@ -188,8 +187,7 @@ class TestTracksShadowing:
         """The injected entry must not mutate the caller's list."""
         allowed = ["Read"]
         options = HaijunAgentOptions(
-            can_use_tool=_can_use_tool, tracks="all", allowed_tools=allowed
-        )
+            can_use_tool=_can_use_tool, tracks="all", allowed_tools=allowed )
         with pytest.warns(CanUseToolShadowedWarning, match="Read, Track"):
             _warn_if_can_use_tool_shadowed(options)
         assert allowed == ["Read"]

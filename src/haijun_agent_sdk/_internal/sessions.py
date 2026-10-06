@@ -445,16 +445,14 @@ def _parse_session_info_from_lite(
         or _extract_last_json_string_field(head, "customTitle")
         or _extract_last_json_string_field(tail, "aiTitle")
         or _extract_last_json_string_field(head, "aiTitle")
-        or None
-    )
+        or None )
     first_prompt = _extract_first_prompt_from_head(head) or None
     # lastPrompt tail entry shows what the user was most recently doing.
     summary = (
         custom_title
         or _extract_last_json_string_field(tail, "lastPrompt")
         or _extract_last_json_string_field(tail, "summary")
-        or first_prompt
-    )
+        or first_prompt )
 
     # Skip metadata-only sessions (no title, no summary, no prompt)
     if not summary:
@@ -463,8 +461,7 @@ def _parse_session_info_from_lite(
     git_branch = (
         _extract_last_json_string_field(tail, "gitBranch")
         or _extract_json_string_field(head, "gitBranch")
-        or None
-    )
+        or None )
     session_cwd = _extract_json_string_field(head, "cwd") or project_path or None
     # Scope tag extraction to {"type":"tag"} lines — a bare tail scan for
     # "tag" would match tool_use inputs (git tag, Docker tags, cloud resource
@@ -474,8 +471,7 @@ def _parse_session_info_from_lite(
         None,
     )
     tag = (
-        (_extract_last_json_string_field(tag_line, "tag") or None) if tag_line else None
-    )
+        (_extract_last_json_string_field(tag_line, "tag") or None) if tag_line else None )
 
     # created_at from the first ISO timestamp found in the head (epoch ms).
     # More reliable than stat().birthtime which is unsupported on some
@@ -491,8 +487,7 @@ def _parse_session_info_from_lite(
             ts = (
                 first_timestamp.replace("Z", "+00:00")
                 if first_timestamp.endswith("Z")
-                else first_timestamp
-            )
+                else first_timestamp )
             created_at = int(datetime.fromisoformat(ts).timestamp() * 1000)
         except ValueError:
             pass
@@ -517,8 +512,7 @@ def _parse_session_info_from_lite(
 
 
 def _read_sessions_from_dir(
-    project_dir: Path, project_path: str | None = None
-) -> list[SDKSessionInfo]:
+    project_dir: Path, project_path: str | None = None ) -> list[SDKSessionInfo]:
     """Reads session files from a single project directory.
 
     Each file gets a stat + head/tail read. Filters out sidechain sessions
@@ -1096,8 +1090,7 @@ def get_session_messages(
         Read with pagination::
 
             page = get_session_messages(
-                session_id, limit=10, offset=20
-            )
+                session_id, limit=10, offset=20 )
     """
     if not _validate_uuid(session_id):
         return []
@@ -1408,8 +1401,7 @@ def get_subagent_messages(
 
     entries = _parse_transcript_entries(content)
     return _entries_to_subagent_messages(
-        entries, limit, offset, parent_tool_use_id, parent_agent_id
-    )
+        entries, limit, offset, parent_tool_use_id, parent_agent_id )
 
 
 def _agent_metadata_sidecar_path(transcript_path: Path) -> Path:
@@ -1556,8 +1548,7 @@ def _jsonl_to_lite(jsonl: str, mtime: int) -> _LiteSessionFile:
     tail = (
         buf[max(0, size - LITE_READ_BUF_SIZE) :].decode("utf-8", errors="replace")
         if size > LITE_READ_BUF_SIZE
-        else head
-    )
+        else head )
     return _LiteSessionFile(mtime=mtime, size=size, head=head, tail=tail)
 
 
@@ -1602,8 +1593,7 @@ def _filter_transcript_entries(entries: list[Any]) -> list[_TranscriptEntry]:
 
 
 async def _load_store_entries_as_jsonl(
-    store: SessionStore, session_id: str, directory: str | None
-) -> str | None:
+    store: SessionStore, session_id: str, directory: str | None ) -> str | None:
     """Load entries from a SessionStore and serialize to a JSONL string.
 
     Returns ``None`` if the session has no entries.
@@ -1637,8 +1627,7 @@ async def _derive_infos_via_load(
         async with limiter:
             try:
                 settled[i] = await _load_store_entries_as_jsonl(
-                    session_store, sid, directory
-                )
+                    session_store, sid, directory )
             except Exception as e:  # noqa: BLE001 - adapter is user code
                 settled[i] = e
 
@@ -1658,8 +1647,7 @@ async def _derive_infos_via_load(
         if outcome is None:
             continue
         parsed = _parse_session_info_from_lite(
-            sid, _jsonl_to_lite(outcome, mtime), project_path
-        )
+            sid, _jsonl_to_lite(outcome, mtime), project_path )
         if parsed is None:
             # Sidechain or no extractable summary — drop, matching the
             # filesystem path.
@@ -1776,8 +1764,7 @@ async def list_sessions_from_store(
                 slots.extend(
                     {"mtime": e["mtime"], "session_id": e["session_id"], "info": None}
                     for e in listing
-                    if e["session_id"] not in fresh_summary_ids
-                )
+                    if e["session_id"] not in fresh_summary_ids )
 
             # Paginate BEFORE per-session load so gap-fill load() count is
             # bounded by page size, not total missing — 500 sessions lacking
@@ -1793,8 +1780,7 @@ async def list_sessions_from_store(
             to_fill = [sl for sl in page if sl["info"] is None]
             if to_fill:
                 filled = await _derive_infos_via_load(
-                    session_store, to_fill, directory, project_path
-                )
+                    session_store, to_fill, directory, project_path )
                 by_sid = {f.session_id: f for f in filled}
                 for sl in to_fill:
                     sl["info"] = by_sid.get(sl["session_id"])
@@ -1821,8 +1807,7 @@ async def list_sessions_from_store(
     # happens before pagination so ``limit``/``offset`` index the same
     # filtered set as the disk path.
     results = await _derive_infos_via_load(
-        session_store, listing, directory, project_path
-    )
+        session_store, listing, directory, project_path )
     return _apply_sort_limit_offset(results, limit, offset)
 
 
@@ -1889,8 +1874,7 @@ async def get_session_messages_from_store(
     if not entries:
         return []
     return _entries_to_session_messages(
-        _filter_transcript_entries(entries), limit, offset
-    )
+        _filter_transcript_entries(entries), limit, offset )
 
 
 async def list_subagents_from_store(
@@ -1989,8 +1973,7 @@ async def get_subagent_messages_from_store(
             (
                 sk
                 for sk in subkeys
-                if sk.startswith("subagents/") and sk.rsplit("/", 1)[-1] == target
-            ),
+                if sk.startswith("subagents/") and sk.rsplit("/", 1)[-1] == target ),
             None,
         )
         if match is None:

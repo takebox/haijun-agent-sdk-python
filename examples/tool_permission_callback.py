@@ -26,8 +26,7 @@ tool_usage_log = []
 async def my_permission_callback(
     tool_name: str,
     input_data: dict,
-    context: ToolPermissionContext
-) -> PermissionResultAllow | PermissionResultDeny:
+    context: ToolPermissionContext ) -> PermissionResultAllow | PermissionResultDeny:
     """Control tool permissions based on tool type and input."""
 
     # Log the tool request
@@ -61,8 +60,7 @@ async def my_permission_callback(
             modified_input = input_data.copy()
             modified_input["file_path"] = safe_path
             return PermissionResultAllow(
-                updated_input=modified_input
-            )
+                updated_input=modified_input )
 
     # Check dangerous bash commands
     if tool_name == "Bash":
@@ -111,8 +109,7 @@ async def main():
         can_use_tool=my_permission_callback,
         # Use default permission mode to ensure callbacks are invoked
         permission_mode="default",
-        cwd="."  # Set working directory
-    )
+        cwd="."  # Set working directory )
 
     # Create client and send a query that will use multiple tools
     async with HaijunSDKClient(options) as client:

@@ -49,8 +49,7 @@ async for message in query(prompt="Hello Haijun"):
 # With options
 options = HaijunAgentOptions(
     system_prompt="You are a helpful assistant",
-    max_turns=1
-)
+    max_turns=1 )
 
 async for message in query(prompt="Tell me a joke", options=options):
     print(message)
@@ -63,13 +62,11 @@ By default, Haijun has access to the full [Haijun Code toolset](https://raw.haij
 ```python
 options = HaijunAgentOptions(
     allowed_tools=["Read", "Write", "Bash"],  # auto-approve these tools
-    permission_mode='acceptEdits'  # auto-accept file edits
-)
+    permission_mode='acceptEdits'  # auto-accept file edits )
 
 async for message in query(
     prompt="Create a hello.py file",
-    options=options
-):
+    options=options ):
     # Process tool use and results
     pass
 ```
@@ -255,8 +252,7 @@ from haijun_agent_sdk import (
     CLIConnectionError,  # Connection issues
     ProcessError,        # Process failed
     ResultError,         # Run ended with an error result (subclass of ProcessError)
-    CLIJSONDecodeError,  # JSON parsing issues
-)
+    CLIJSONDecodeError,  # JSON parsing issues )
 
 try:
     async for message in query(prompt="Hello"):

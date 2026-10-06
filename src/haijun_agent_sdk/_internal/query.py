@@ -276,8 +276,7 @@ class Query:
 
         # Use longer timeout for initialize since MCP servers may take time to start
         response = await self._send_control_request(
-            request, timeout=self._initialize_timeout
-        )
+            request, timeout=self._initialize_timeout )
         self._initialized = True
         self._initialization_result = response  # Store for later access
         return response
@@ -419,8 +418,7 @@ class Query:
                 # stderr deliberately not carried over: the transport's value is
                 # a generic placeholder, and the result text is the real cause.
                 pending_error = ResultError(
-                    error_text, data=self._last_error_result, exit_code=e.exit_code
-                )
+                    error_text, data=self._last_error_result, exit_code=e.exit_code )
                 pending_error.__cause__ = e
                 logger.debug(
                     "Replacing ProcessError (exit code %s) with ResultError",
@@ -512,8 +510,7 @@ class Query:
                         "updatedInput": (
                             response.updated_input
                             if response.updated_input is not None
-                            else original_input
-                        ),
+                            else original_input ),
                     }
                     if response.updated_permissions is not None:
                         response_data["updatedPermissions"] = [
@@ -540,8 +537,7 @@ class Query:
                 hook_output = await callback(
                     request_data.get("input"),
                     request_data.get("tool_use_id"),
-                    {"signal": None},  # TODO: Add abort signal support
-                )
+                    {"signal": None},  # TODO: Add abort signal support )
                 # Convert Python-safe field names (async_, continue_) to CLI-expected names (async, continue)
                 response_data = _convert_hook_output_for_cli(hook_output)
 
@@ -557,8 +553,7 @@ class Query:
                 assert isinstance(server_name, str)
                 assert isinstance(mcp_message, dict)
                 mcp_response = await self._handle_sdk_mcp_request(
-                    server_name, mcp_message
-                )
+                    server_name, mcp_message )
                 if mcp_response is None:
                     # JSON-RPC notifications get no reply, but the control
                     # request that carried one still expects an ack.
@@ -596,8 +591,7 @@ class Query:
             await self.transport.write(json.dumps(error_response) + "\n")
 
     async def _send_control_request(
-        self, request: dict[str, Any], timeout: float = 60.0
-    ) -> dict[str, Any]:
+        self, request: dict[str, Any], timeout: float = 60.0 ) -> dict[str, Any]:
         """Send control request to CLI and wait for response.
 
         Args:

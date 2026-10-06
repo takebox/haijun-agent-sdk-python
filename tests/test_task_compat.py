@@ -185,11 +185,9 @@ class TestExceptionPropagation:
 
         assert any(
             "Unhandled exception in detached trio task" in r.message
-            for r in caplog.records
-        ), f"expected warning log, got: {[r.message for r in caplog.records]}"
+            for r in caplog.records ), f"expected warning log, got: {[r.message for r in caplog.records]}"
         assert any(
-            r.exc_info and isinstance(r.exc_info[1], ValueError) for r in caplog.records
-        )
+            r.exc_info and isinstance(r.exc_info[1], ValueError) for r in caplog.records )
 
 
 class TestContextVarPropagation:

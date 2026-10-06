@@ -39,8 +39,7 @@ case "${1:-unit}" in
         echo ""
         echo "Running unit tests in Docker..."
         docker run --rm haijun-sdk-test \
-            python -m pytest tests/ -v
-        ;;
+            python -m pytest tests/ -v ;;
     e2e)
         if [ -z "$HAIJUN_API_KEY" ]; then
             echo "Error: HAIJUN_API_KEY environment variable is required for e2e tests"
@@ -51,8 +50,7 @@ case "${1:-unit}" in
         echo ""
         echo "Running e2e tests in Docker..."
         docker run --rm -e HAIJUN_API_KEY \
-            haijun-sdk-test python -m pytest e2e-tests/ -v -m e2e
-        ;;
+            haijun-sdk-test python -m pytest e2e-tests/ -v -m e2e ;;
     all)
         echo ""
         echo "Running unit tests in Docker..."
@@ -66,11 +64,9 @@ case "${1:-unit}" in
                 haijun-sdk-test python -m pytest e2e-tests/ -v -m e2e
         else
             echo "Skipping e2e tests (HAIJUN_API_KEY not set)"
-        fi
-        ;;
+        fi ;;
     *)
-        usage
-        ;;
+        usage ;;
 esac
 
 echo ""

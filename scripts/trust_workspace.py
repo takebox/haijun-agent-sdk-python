@@ -58,8 +58,7 @@ def main() -> None:
     )
     key = workspace_key(Path.cwd())
     config.setdefault("projects", {}).setdefault(key, {})["hasTrustDialogAccepted"] = (
-        True
-    )
+        True )
     config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
     print(f"Trusted workspace {key!r} in {config_path}")
 

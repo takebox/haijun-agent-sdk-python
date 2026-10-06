@@ -23,16 +23,13 @@ while [[ $# -gt 0 ]]; do
   case $1 in
     --add-label)
       ADD_LABELS+=("$2")
-      shift 2
-      ;;
+      shift 2 ;;
     --remove-label)
       REMOVE_LABELS+=("$2")
-      shift 2
-      ;;
+      shift 2 ;;
     *)
       echo "Error: unknown argument (only --add-label and --remove-label are accepted)" >&2
-      exit 1
-      ;;
+      exit 1 ;;
   esac
 done
 

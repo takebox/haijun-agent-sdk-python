@@ -121,8 +121,7 @@ async def test_conformance_with_options_dataclass(s3_client: Any) -> None:
         counter += 1
         return S3SessionStore(
             options=S3SessionStoreOptions(
-                bucket=BUCKET, prefix=f"opt{counter}", client=s3_client
-            )
+                bucket=BUCKET, prefix=f"opt{counter}", client=s3_client )
         )
 
     await run_session_store_conformance(factory)
@@ -193,8 +192,7 @@ async def test_append_same_ms_preserves_order(monkeypatch: pytest.MonkeyPatch) -
     # order. The per-instance monotonic counter makes ms strictly increasing.
     client = _RecordingClient()
     monkeypatch.setattr(
-        "session_stores.s3_session_store.time.time", lambda: 1_700_000_000.0
-    )
+        "session_stores.s3_session_store.time.time", lambda: 1_700_000_000.0 )
     store = _make_store(client)
     key: SessionKey = {"project_key": "proj", "session_id": "sess"}
     for i in range(3):
@@ -527,8 +525,7 @@ def _entry(role: str, n: int, parent: str | None, sid: str) -> dict[str, Any]:
 
 @pytest.mark.anyio
 async def test_materialize_round_trip(
-    s3_client: Any, tmp_path: Path, isolated_home: Path
-) -> None:
+    s3_client: Any, tmp_path: Path, isolated_home: Path ) -> None:
     cwd = tmp_path / "project"
     cwd.mkdir()
     store = _make_store(s3_client)
@@ -591,8 +588,7 @@ async def test_batcher_50_entries(s3_client: Any, tmp_path: Path) -> None:
         pass
 
     batcher = TranscriptMirrorBatcher(
-        store=store, projects_dir=projects_dir, on_error=noop_error
-    )
+        store=store, projects_dir=projects_dir, on_error=noop_error )
     for i in range(50):
         batcher.enqueue(file_path, [{"type": "user", "n": i}])
     await batcher.flush()

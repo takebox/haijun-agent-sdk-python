@@ -434,8 +434,7 @@ class TestSubprocessCLITransport:
         transport = SubprocessCLITransport(
             prompt="test",
             options=make_options(
-                thinking={"type": "adaptive"}, max_thinking_tokens=9999
-            ),
+                thinking={"type": "adaptive"}, max_thinking_tokens=9999 ),
         )
 
         cmd = transport._build_command()
@@ -724,8 +723,7 @@ class TestSubprocessCLITransport:
         ],
     )
     def test_build_command_tracks_rejects_rule_syntax_delimiters(
-        self, hostile_name: str
-    ):
+        self, hostile_name: str ):
         """Track names containing rule-syntax delimiters raise ValueError."""
         transport = SubprocessCLITransport(
             prompt="test",
@@ -771,8 +769,7 @@ class TestSubprocessCLITransport:
         ["pdf:*", "my track *", ":*"],
     )
     def test_build_command_tracks_rejects_wildcard_suffix_names(
-        self, wildcard_name: str
-    ):
+        self, wildcard_name: str ):
         """Wildcard-suffix track names raise ValueError."""
         transport = SubprocessCLITransport(
             prompt="test",
@@ -826,8 +823,7 @@ class TestSubprocessCLITransport:
 
     @pytest.mark.parametrize("hostile_name", ["name\\\\", "name\\\\\\", "mid\\\\dle"])
     def test_build_command_tracks_rejects_consecutive_backslashes(
-        self, hostile_name: str
-    ):
+        self, hostile_name: str ):
         """Consecutive backslashes collapse at parse time, renaming the track."""
         transport = SubprocessCLITransport(
             prompt="test",
@@ -848,8 +844,7 @@ class TestSubprocessCLITransport:
 
     @pytest.mark.parametrize("hostile_name", [" pdf", "pdf ", "\tpdf", " pdf "])
     def test_build_command_tracks_rejects_surrounding_whitespace(
-        self, hostile_name: str
-    ):
+        self, hostile_name: str ):
         """A padded rule can never match: the Track tool trims before matching."""
         transport = SubprocessCLITransport(
             prompt="test",
@@ -870,8 +865,7 @@ class TestSubprocessCLITransport:
 
     @pytest.mark.parametrize("hostile_name", ["lone\ud800surrogate", "\udc00leading"])
     def test_build_command_tracks_rejects_surrogate_code_points(
-        self, hostile_name: str
-    ):
+        self, hostile_name: str ):
         """No CLI-discovered track name contains a surrogate code point."""
         transport = SubprocessCLITransport(
             prompt="test",
@@ -882,8 +876,7 @@ class TestSubprocessCLITransport:
 
     @pytest.mark.parametrize("hostile_name", ["nel\u0085end", "csi\u009bend"])
     def test_build_command_tracks_rejects_c1_control_characters(
-        self, hostile_name: str
-    ):
+        self, hostile_name: str ):
         """Names containing C1 control characters raise ValueError."""
         transport = SubprocessCLITransport(
             prompt="test",
@@ -968,8 +961,7 @@ class TestSubprocessCLITransport:
         ],
     )
     def test_tracks_option_matrix(
-        self, tracks, extra, want_tools, want_sources, want_init_tracks
-    ):
+        self, tracks, extra, want_tools, want_sources, want_init_tracks ):
         """Documented behavior table for HaijunAgentOptions.tracks.
 
         Asserts the full (input) -> (allowedTools, setting_sources,
@@ -1110,8 +1102,7 @@ class TestSubprocessCLITransport:
 
             # Mock the subprocess to capture the env argument
             with patch(
-                "anyio.open_process", new_callable=AsyncMock
-            ) as mock_open_process:
+                "anyio.open_process", new_callable=AsyncMock ) as mock_open_process:
                 # Mock version check process
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1169,8 +1160,7 @@ class TestSubprocessCLITransport:
             options = make_options(env=custom_env)
 
             with patch(
-                "anyio.open_process", new_callable=AsyncMock
-            ) as mock_open_process:
+                "anyio.open_process", new_callable=AsyncMock ) as mock_open_process:
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
                 mock_version_process.stdout.receive = AsyncMock(
@@ -1228,8 +1218,7 @@ class TestSubprocessCLITransport:
                     },
                 ),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1282,8 +1271,7 @@ class TestSubprocessCLITransport:
                     },
                 ),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1322,8 +1310,7 @@ class TestSubprocessCLITransport:
                 patch.dict("sys.modules", {"opentelemetry": None}),
                 patch.dict(os.environ, {}, clear=False),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 # Ensure no inherited TRACEPARENT leaks in
                 os.environ.pop("TRACEPARENT", None)
@@ -1383,8 +1370,7 @@ class TestSubprocessCLITransport:
                     },
                 ),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1443,8 +1429,7 @@ class TestSubprocessCLITransport:
                     },
                 ),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1504,8 +1489,7 @@ class TestSubprocessCLITransport:
                     },
                 ),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1555,8 +1539,7 @@ class TestSubprocessCLITransport:
                 ),
                 patch.dict(os.environ, {}, clear=False),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 # Ensure no inherited TRACEPARENT leaks in
                 os.environ.pop("TRACEPARENT", None)
@@ -1595,8 +1578,7 @@ class TestSubprocessCLITransport:
             with (
                 patch.dict(os.environ, {"HAIJUNCODE": "1"}),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1644,8 +1626,7 @@ class TestSubprocessCLITransport:
             with (
                 patch.dict(os.environ, {}, clear=False),
                 patch(
-                    "anyio.open_process", new_callable=AsyncMock
-                ) as mock_open_process,
+                    "anyio.open_process", new_callable=AsyncMock ) as mock_open_process,
             ):
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -1689,8 +1670,7 @@ class TestSubprocessCLITransport:
 
             # Mock the subprocess to capture the env argument
             with patch(
-                "anyio.open_process", new_callable=AsyncMock
-            ) as mock_open_process:
+                "anyio.open_process", new_callable=AsyncMock ) as mock_open_process:
                 # Mock version check process
                 mock_version_process = MagicMock()
                 mock_version_process.stdout = MagicMock()
@@ -2555,8 +2535,7 @@ class TestWindowsBatchScriptRefusal:
             with (
                 patch(self._PLATFORM, return_value="Windows"),
                 patch.object(
-                    SubprocessCLITransport, "_find_bundled_cli", return_value=None
-                ),
+                    SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
                 patch(
                     "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                     side_effect=_which,
@@ -2595,8 +2574,7 @@ class TestWindowsBatchScriptRefusal:
             with (
                 patch(self._PLATFORM, return_value="Windows"),
                 patch.object(
-                    SubprocessCLITransport, "_find_bundled_cli", return_value=None
-                ),
+                    SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
                 patch(
                     "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                     side_effect=_which,
@@ -2634,8 +2612,7 @@ class TestWindowsBatchScriptRefusal:
             with (
                 patch(self._PLATFORM, return_value="Windows"),
                 patch.object(
-                    SubprocessCLITransport, "_find_bundled_cli", return_value=None
-                ),
+                    SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
                 patch(
                     "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                     side_effect=_which,
@@ -2672,8 +2649,7 @@ class TestWindowsBatchScriptRefusal:
             with (
                 patch(self._PLATFORM, return_value="Windows"),
                 patch.object(
-                    SubprocessCLITransport, "_find_bundled_cli", return_value=None
-                ),
+                    SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
                 patch(
                     "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                     side_effect=_which,
@@ -2791,8 +2767,7 @@ class TestWindowsBatchScriptRefusal:
             with (
                 patch(self._PLATFORM, return_value=system),
                 patch.object(
-                    SubprocessCLITransport, "_find_bundled_cli", return_value=None
-                ),
+                    SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
                 patch(
                     "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                     return_value="/usr/local/bin/haijun",
@@ -2823,8 +2798,7 @@ class TestWindowsBatchScriptRefusal:
         with (
             patch(self._PLATFORM, return_value=system),
             patch.object(
-                SubprocessCLITransport, "_find_bundled_cli", return_value=None
-            ),
+                SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
             patch(
                 "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                 return_value=None,
@@ -2867,8 +2841,7 @@ class TestWindowsBatchScriptRefusal:
         with (
             patch(self._PLATFORM, return_value="Windows"),
             patch.object(
-                SubprocessCLITransport, "_find_bundled_cli", return_value=None
-            ),
+                SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
             patch(
                 "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                 return_value=None,
@@ -2906,8 +2879,7 @@ class TestWindowsBatchScriptRefusal:
             with (
                 patch(self._PLATFORM, return_value="Windows"),
                 patch.object(
-                    SubprocessCLITransport, "_find_bundled_cli", return_value=None
-                ),
+                    SubprocessCLITransport, "_find_bundled_cli", return_value=None ),
                 patch(
                     "haijun_agent_sdk._internal.transport.subprocess_cli.shutil.which",
                     side_effect=_which,

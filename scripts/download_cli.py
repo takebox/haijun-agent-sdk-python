@@ -58,8 +58,7 @@ def get_cli_version() -> str:
     """
     version = os.environ.get("HAIJUN_CLI_VERSION", DEFAULT_VERSION)
     return version_validation.validate_version(
-        version, source="HAIJUN_CLI_VERSION", allow_dist_tag=True
-    )
+        version, source="HAIJUN_CLI_VERSION", allow_dist_tag=True )
 
 
 def find_installed_cli() -> Path | None:

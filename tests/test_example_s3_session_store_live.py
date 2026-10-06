@@ -125,8 +125,7 @@ async def test_live_conformance(s3_client: Any, run_prefix: str) -> None:
         nonlocal counter
         counter += 1
         return S3SessionStore(
-            bucket=S3_BUCKET, prefix=f"{run_prefix}iso{counter}", client=s3_client
-        )
+            bucket=S3_BUCKET, prefix=f"{run_prefix}iso{counter}", client=s3_client )
 
     await run_session_store_conformance(factory)
 
@@ -138,8 +137,7 @@ async def test_live_conformance(s3_client: Any, run_prefix: str) -> None:
 
 @pytest.mark.anyio
 async def test_live_materialize_round_trip(
-    s3_client: Any, run_prefix: str, tmp_path: Path, isolated_home: Path
-) -> None:
+    s3_client: Any, run_prefix: str, tmp_path: Path, isolated_home: Path ) -> None:
     cwd = tmp_path / "project"
     cwd.mkdir()
     store = S3SessionStore(bucket=S3_BUCKET, prefix=run_prefix, client=s3_client)
@@ -194,8 +192,7 @@ async def test_live_materialize_round_trip(
 
 @pytest.mark.anyio
 async def test_live_batcher_50_entries(
-    s3_client: Any, run_prefix: str, tmp_path: Path
-) -> None:
+    s3_client: Any, run_prefix: str, tmp_path: Path ) -> None:
     store = S3SessionStore(bucket=S3_BUCKET, prefix=run_prefix, client=s3_client)
     projects_dir = str(tmp_path / "projects")
     file_path = str(Path(projects_dir) / "proj" / "sess.jsonl")
@@ -204,8 +201,7 @@ async def test_live_batcher_50_entries(
         pass
 
     batcher = TranscriptMirrorBatcher(
-        store=store, projects_dir=projects_dir, on_error=noop_error
-    )
+        store=store, projects_dir=projects_dir, on_error=noop_error )
     for i in range(50):
         batcher.enqueue(file_path, [{"type": "user", "n": i}])
     await batcher.flush()

@@ -90,8 +90,7 @@ def _write_fake_cli(tmp_path: Path) -> Path:
 def _process_state(pid: int) -> str:
     """'gone', 'zombie', or 'alive'."""
     out = subprocess.run(
-        ["ps", "-o", "stat=", "-p", str(pid)], capture_output=True, text=True
-    ).stdout.strip()
+        ["ps", "-o", "stat=", "-p", str(pid)], capture_output=True, text=True ).stdout.strip()
     if not out:
         return "gone"
     return "zombie" if out.startswith("Z") else "alive"
@@ -200,8 +199,7 @@ def test_fake_cli_speaks_the_protocol(tmp_path: Path) -> None:
     pass for the wrong reason."""
     script = _write_fake_cli(tmp_path)
     out = subprocess.run(
-        [str(script), "-v"], capture_output=True, text=True, check=True
-    ).stdout
+        [str(script), "-v"], capture_output=True, text=True, check=True ).stdout
     assert out.startswith("2.0.0")
 
     proc = subprocess.run(

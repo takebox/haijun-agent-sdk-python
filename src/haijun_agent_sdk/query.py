@@ -110,8 +110,7 @@ async def query(
         transport = MyCustomTransport()
         async for message in query(
             prompt="Hello",
-            transport=transport
-        ):
+            transport=transport ):
             print(message)
         ```
 
@@ -124,6 +123,5 @@ async def query(
     client = InternalClient()
 
     async for message in client.process_query(
-        prompt=prompt, options=options, transport=transport
-    ):
+        prompt=prompt, options=options, transport=transport ):
         yield message

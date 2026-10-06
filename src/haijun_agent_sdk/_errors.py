@@ -15,8 +15,7 @@ class CLINotFoundError(CLIConnectionError):
     """Raised when Haijun Code is not found or not installed."""
 
     def __init__(
-        self, message: str = "Haijun Code not found", cli_path: str | None = None
-    ):
+        self, message: str = "Haijun Code not found", cli_path: str | None = None ):
         if cli_path:
             message = f"{message}: {cli_path}"
         super().__init__(message)
@@ -26,8 +25,7 @@ class ProcessError(HaijunSDKError):
     """Raised when the CLI process fails."""
 
     def __init__(
-        self, message: str, exit_code: int | None = None, stderr: str | None = None
-    ):
+        self, message: str, exit_code: int | None = None, stderr: str | None = None ):
         self.exit_code = exit_code
         self.stderr = stderr
 
@@ -112,8 +110,7 @@ class ResultError(ProcessError):
         self.terminal_reason: str | None = reason if isinstance(reason, str) else None
         session_id = data.get("session_id")
         self.session_id: str | None = (
-            session_id if isinstance(session_id, str) else None
-        )
+            session_id if isinstance(session_id, str) else None )
         super().__init__(message, exit_code=exit_code)
 
 

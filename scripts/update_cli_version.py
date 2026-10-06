@@ -32,8 +32,7 @@ def update_cli_version(new_version: str, version_path: Path | None = None) -> No
     # literal and injects arbitrary Python. The validated value is the input
     # with surrounding whitespace stripped -- write that, not the raw input.
     new_version = version_validation.validate_version(
-        new_version, source="CLI version", allow_dist_tag=False
-    )
+        new_version, source="CLI version", allow_dist_tag=False )
 
     if version_path is None:
         version_path = DEFAULT_VERSION_PATH
@@ -50,8 +49,7 @@ def update_cli_version(new_version: str, version_path: Path | None = None) -> No
     # newline, and a bare trailing \ raises. A callable's return value is used
     # literally.
     new_content, count = ASSIGNMENT_PATTERN.subn(
-        lambda _match: literal, content, count=1
-    )
+        lambda _match: literal, content, count=1 )
     if count != 1:
         raise ValueError(f"No __cli_version__ assignment found in {version_path}")
 

@@ -81,8 +81,7 @@ class HaijunSDKClient:
         self._materialized: MaterializedResume | None = None
 
     async def connect(
-        self, prompt: str | AsyncIterable[dict[str, Any]] | None = None
-    ) -> None:
+        self, prompt: str | AsyncIterable[dict[str, Any]] | None = None ) -> None:
         """Connect to Haijun with a prompt or message stream."""
 
         from ._internal.session_resume import materialize_resume_session
@@ -115,8 +114,7 @@ class HaijunSDKClient:
         self._materialized = (
             await materialize_resume_session(self.options)
             if self._custom_transport is None
-            else None
-        )
+            else None )
         try:
             await self._connect_inner(prompt, actual_prompt)
         except BaseException:

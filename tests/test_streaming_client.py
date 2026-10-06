@@ -1093,8 +1093,7 @@ print('{"type": "result", "subtype": "success", "duration_ms": 100, "duration_ap
         try:
             # Mock _find_cli to return the test script path directly
             with patch.object(
-                SubprocessCLITransport, "_find_cli", return_value=test_script
-            ):
+                SubprocessCLITransport, "_find_cli", return_value=test_script ):
                 # Mock _build_command to properly execute Python script
                 original_build_command = SubprocessCLITransport._build_command
 
@@ -1111,8 +1110,7 @@ print('{"type": "result", "subtype": "success", "duration_ms": 100, "duration_ap
                     return cmd
 
                 with patch.object(
-                    SubprocessCLITransport, "_build_command", mock_build_command
-                ):
+                    SubprocessCLITransport, "_build_command", mock_build_command ):
                     # Run query with async iterable
                     messages = []
                     async for msg in query(prompt=message_stream()):
@@ -1269,6 +1267,5 @@ class TestHaijunSDKClientEdgeCases:
                 assert len(messages) == 3
                 assert all(
                     isinstance(msg, AssistantMessage | ResultMessage)
-                    for msg in messages
-                )
+                    for msg in messages )
                 assert isinstance(messages[-1], ResultMessage)

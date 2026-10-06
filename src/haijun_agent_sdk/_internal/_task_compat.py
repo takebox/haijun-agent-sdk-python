@@ -139,8 +139,7 @@ class _TrioTaskHandle(TaskHandle):
 
         await self._done_event.wait()
         if self._exception is not None and not isinstance(
-            self._exception, trio.Cancelled
-        ):
+            self._exception, trio.Cancelled ):
             raise self._exception
 
 

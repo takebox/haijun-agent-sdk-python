@@ -233,8 +233,7 @@ async def example_with_options():
                 display_message(msg)
                 for block in msg.content:
                     if hasattr(block, "name") and not isinstance(
-                        block, TextBlock
-                    ):  # ToolUseBlock
+                        block, TextBlock ):  # ToolUseBlock
                         tool_uses.append(getattr(block, "name", ""))
             else:
                 display_message(msg)
