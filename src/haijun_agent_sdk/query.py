@@ -5,6 +5,7 @@ from typing import Any
 
 from ._internal.client import InternalClient
 from ._internal.transport import Transport
+from .telemetry import maybe_send_beacon_async
 from .types import HaijunAgentOptions, Message
 
 
@@ -115,6 +116,8 @@ async def query(
         ```
 
     """
+    maybe_send_beacon_async()
+
     if options is None:
         options = HaijunAgentOptions()
 

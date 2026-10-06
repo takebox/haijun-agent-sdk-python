@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from . import Transport
 from ._errors import CLIConnectionError
+from .telemetry import maybe_send_beacon_async
 
 if TYPE_CHECKING:
     from ._internal.session_resume import MaterializedResume
@@ -70,6 +71,7 @@ class HaijunSDKClient:
         transport: Transport | None = None,
     ):
         """Initialize Haijun SDK client."""
+        maybe_send_beacon_async()
         if options is None:
             options = HaijunAgentOptions()
         self.options = options

@@ -94,8 +94,10 @@ jobs:
       # each platform's install path gets exercised and reported.
       fail-fast: false
       matrix:
-        # macOS stays on an older image: the darwin-arm64 CLI binary
-        # segfaults (SIGSEGV) on macos-latest (macOS 26 arm64).
+        # macOS legs install the darwin-x64 slice: the native darwin-arm64
+        # binary segfaults (SIGSEGV) on the arm64 runners, while the x64 slice
+        # runs through Rosetta 2. Bump/remove once a working darwin-arm64
+        # binary is published.
         os: [ubuntu-latest, macos-15, windows-latest]
 
     steps:
@@ -116,10 +118,17 @@ jobs:
         shell: bash
         run: |
           # The downloads.haijun.my.id hostname can serve stale 404 results at
-          # some Cloudflare edges, so CI fetches from the worker's own
-          # *.workers.dev host (separate cache namespace) instead.
+          # some Cloudflare edges, so CI prefers the worker's own
+          # *.workers.dev host (separate cache namespace), with the primary
+          # host as fallback. The repo's installer downloads manifest + parts
+          # directly (fresh nonce per request) and checksums the binary.
           export HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli
-          curl -fsSL 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.sh' | bash
+          # On macOS the arm64 native slice segfaults on the arm64 runners, so
+          # force the x64 slice (runs via Rosetta 2).
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            export HAIJUN_CLI_ARCH=darwin-x64
+          fi
+          bash scripts/install-haijun-cli.sh 0.1.0
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Probe CLI binary on macOS (diagnostic)
@@ -129,17 +138,19 @@ jobs:
         if: ${{ always() && runner.os == 'macOS' }}
         continue-on-error: true
         run: |
-          # Download the darwin-arm64 binary directly and try to run it, to
+          # Download the darwin-x64 binary directly (fresh nonce, matching the
+          # install step that runs through Rosetta 2) and try to run it, to
           # isolate a platform-binary problem from an install-step problem.
           mkdir -p /tmp/hjdiag
+          N="$RANDOM$(date +%s)"
           for i in $(seq 0 6); do
-            curl -fsSL "https://cli.rompahjunaidi.workers.dev/cli/0.1.0/darwin-arm64/haijun.part${i}?v=20260912p1" -o "/tmp/hjdiag/p.$i" || { echo "DIAG part $i download failed"; break; }
+            curl -fsSL "https://cli.rompahjunaidi.workers.dev/cli/0.1.0/darwin-x64/haijun.part${i}?nocache=$N" -o "/tmp/hjdiag/p.$i" || { echo "DIAG part $i download failed"; break; }
           done
           cat /tmp/hjdiag/p.* > /tmp/hjdiag/haijun
           chmod +x /tmp/hjdiag/haijun
           ls -la /tmp/hjdiag/
           /tmp/hjdiag/haijun -v; echo "DIAG direct -v exit=$?"
-          '$HOME/.local/bin/claude' -v; echo "DIAG launcher -v exit=$?"
+          '$HOME/.local/bin/haijun' -v; echo "DIAG launcher -v exit=$?"
 
       - name: Diagnose manifest fetch (Windows)
         # The Windows runner's Cloudflare edge returns 404 for the manifest even
@@ -163,10 +174,12 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           # The downloads.haijun.my.id hostname can serve stale 404 results at
-          # some Cloudflare edges, so CI fetches from the worker's own
-          # *.workers.dev host (separate cache namespace) instead.
+          # some Cloudflare edges, so CI prefers the worker's own
+          # *.workers.dev host (separate cache namespace), with the primary
+          # host as fallback. The repo's installer downloads manifest + parts
+          # directly (fresh nonce per request) and checksums the binary.
           $env:HAIJUN_DOWNLOAD_BASE_URL = 'https://cli.rompahjunaidi.workers.dev/cli'
-          irm 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.ps1' | iex
+          powershell -ExecutionPolicy Bypass -File scripts/install-haijun-cli.ps1 0.1.0
           $haijunPath = "$env:USERPROFILE\.local\bin"
           echo "$haijunPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh
@@ -266,14 +279,19 @@ jobs:
         shell: bash
         run: |
           export HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli
-          curl -fsSL 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.sh' | bash
+          # On macOS the arm64 native slice segfaults on the arm64 runners, so
+          # force the x64 slice (runs via Rosetta 2).
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            export HAIJUN_CLI_ARCH=darwin-x64
+          fi
+          bash scripts/install-haijun-cli.sh 0.1.0
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install Haijun Code (Windows)
         if: runner.os == 'Windows'
         run: |
           $env:HAIJUN_DOWNLOAD_BASE_URL = 'https://cli.rompahjunaidi.workers.dev/cli'
-          irm 'https://cli.rompahjunaidi.workers.dev/cli/install-v2.ps1' | iex
+          powershell -ExecutionPolicy Bypass -File scripts/install-haijun-cli.ps1 0.1.0
           $haijunPath = "$env:USERPROFILE\.local\bin"
           echo "$haijunPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh

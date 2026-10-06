@@ -12,6 +12,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apt-get update && apt-get install -y \
     curl \
     git \
+    procps \
     && rm -rf /var/lib/apt/lists/*
 
 # Install the Haijun Code fork binary DIRECTLY.
@@ -24,27 +25,31 @@ RUN apt-get update && apt-get install -y \
 #
 # Fetched from the worker's *.workers.dev host (separate cache namespace) so a
 # stale 404 at a Cloudflare edge on downloads.haijun.my.id can't break the build.
-# The `?v=` nonce defeats any edge-cached 404 for these paths.
+# Every request uses a fresh high-entropy nonce (?nocache=$RANDOM$(date +%s%N)):
+# second-resolution timestamps collide on retries and the edge then serves a
+# cached 404 for the identical URL (observed with the older ?v=$(date +%s)).
 ARG HAIJUN_VERSION=0.1.0
 ENV HAIJUN_DOWNLOAD_BASE_URL=https://cli.rompahjunaidi.workers.dev/cli
+# PATH for the up-next RUN step MUST be declared BEFORE the step that runs
+# `haijun -v`, otherwise the shell can only find the CLI at an absolute path
+# ("haijun: command not found" — the prior ordering bug).
+ENV PATH="/root/.local/bin:$PATH"
 RUN set -euo pipefail; \
     BASE="${HAIJUN_DOWNLOAD_BASE_URL}"; \
-    V="$(date +%s)"; \
-    MAN="$(curl -fsSL "$BASE/${HAIJUN_VERSION}/manifest.v2.json?v=$V")"; \
+    MAN="$(curl -fsSL "$BASE/${HAIJUN_VERSION}/manifest.v2.json?nocache=$RANDOM$(date +%s%N)" || curl -fsSL "https://downloads.haijun.my.id/cli/${HAIJUN_VERSION}/manifest.v2.json?nocache=$RANDOM$(date +%s%N)")"; \
     PARTS="$(printf '%s' "$MAN" | python -c 'import json,sys; print(json.load(sys.stdin)["platforms"]["linux-x64"]["parts"])')"; \
     SHA="$(printf '%s' "$MAN" | python -c 'import json,sys; print(json.load(sys.stdin)["platforms"]["linux-x64"]["checksum"])')"; \
     DIR="$HOME/.haijun-code/bin"; mkdir -p "$DIR" "$HOME/.local/bin"; \
     OUT="$DIR/haijun-${HAIJUN_VERSION}-linux-x64"; : > "$OUT"; \
     i=0; while [ "$i" -lt "$PARTS" ]; do \
-        curl -fsSL "$BASE/${HAIJUN_VERSION}/linux-x64/haijun.part$i?v=$V" >> "$OUT"; \
+        N="$RANDOM$RANDOM$(date +%s%N)"; \
+        curl -fsSL "$BASE/${HAIJUN_VERSION}/linux-x64/haijun.part$i?nocache=$N" >> "$OUT" || curl -fsSL "https://downloads.haijun.my.id/cli/${HAIJUN_VERSION}/linux-x64/haijun.part$i?nocache=$RANDOM$(date +%s%N)" >> "$OUT"; \
         i=$((i+1)); \
     done; \
     echo "$SHA  $OUT" | sha256sum -c -; \
     chmod +x "$OUT"; \
     ln -sf "$OUT" "$HOME/.local/bin/haijun"; \
-    ln -sf "$OUT" "$HOME/.local/bin/claude"; \
     haijun -v | grep -q "Haijun Code"
-ENV PATH="/root/.local/bin:$PATH"
 
 # Set up working directory
 WORKDIR /app
