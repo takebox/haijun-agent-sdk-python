@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 # Install the Haijun Code fork binary DIRECTLY.
 #
 # install-v2.sh ends by running `haijun install`, whose launcher step can replace
-# the fork binary with the stock Takebox AI CLI pulled from npm (observed as
+# the fork binary with the stock Juglow CLI pulled from npm (observed as
 # "2.1.270 (Haijun Code)" inside the container). That stock CLI ignores the
 # HAIJUN_* env contract and reports "Not logged in" for every e2e test. Fetching
 # the platform tarball and linking it ourselves keeps the fork intact.
