@@ -466,7 +466,8 @@ class TestTranscriptMirrorBatcher:
             store=SlowStore(),
             projects_dir=PROJECTS_DIR,
             on_error=_noop_error,
-            max_pending_entries=0,  # every enqueue triggers an eager flush )
+            max_pending_entries=0,  # every enqueue triggers an eager flush
+        )
         batcher.enqueue(_main_path(), [{"type": "x", "n": 1}])
         first = batcher._flush_task
         await anyio.sleep(0)  # let first drain detach + block on gate

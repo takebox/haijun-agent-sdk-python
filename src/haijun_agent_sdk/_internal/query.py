@@ -537,7 +537,8 @@ class Query:
                 hook_output = await callback(
                     request_data.get("input"),
                     request_data.get("tool_use_id"),
-                    {"signal": None},  # TODO: Add abort signal support )
+                    {"signal": None},  # TODO: Add abort signal support
+                )
                 # Convert Python-safe field names (async_, continue_) to CLI-expected names (async, continue)
                 response_data = _convert_hook_output_for_cli(hook_output)
 
@@ -553,7 +554,8 @@ class Query:
                 assert isinstance(server_name, str)
                 assert isinstance(mcp_message, dict)
                 mcp_response = await self._handle_sdk_mcp_request(
-                    server_name, mcp_message )
+                    server_name, mcp_message
+                )
                 if mcp_response is None:
                     # JSON-RPC notifications get no reply, but the control
                     # request that carried one still expects an ack.

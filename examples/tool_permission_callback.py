@@ -109,7 +109,8 @@ async def main():
         can_use_tool=my_permission_callback,
         # Use default permission mode to ensure callbacks are invoked
         permission_mode="default",
-        cwd="."  # Set working directory )
+        cwd="."  # Set working directory
+    )
 
     # Create client and send a query that will use multiple tools
     async with HaijunSDKClient(options) as client:

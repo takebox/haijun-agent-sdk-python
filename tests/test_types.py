@@ -442,7 +442,8 @@ class TestMcpServerStatusTypes:
             McpServerStatusConfig,  # noqa: F401
             McpStatusResponse,  # noqa: F401
             McpToolAnnotations,  # noqa: F401
-            McpToolInfo,  # noqa: F401 )
+            McpToolInfo,  # noqa: F401
+        )
 
     def test_mcp_server_status_connected(self):
         """Test constructing a connected McpServerStatus with full fields."""
